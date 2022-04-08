@@ -1,17 +1,19 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Header from "../component/Header";
+import Logo from "../component/Logo";
 import Paragraph from "../component/Paragraph";
 import { useParams } from "../router/indexWeb";
 import { useStore } from "../stores/store";
-import { styles } from "../style";
+import { styles, stylesRegister } from "../style";
 interface Props extends RouteComponentProps { }
 
-export const DetailsAppointment: React.FC<Props> = ({ history }) => {
+export const DetailsAppointment: React.FC<Props> = observer(({ history }) => {
 
     const { appointmentId } = useParams<{ appointmentId: string }>();
     const { appointmentStore } = useStore();
@@ -20,6 +22,7 @@ export const DetailsAppointment: React.FC<Props> = ({ history }) => {
 
     useEffect(() => {
         if (appointmentId) loadAppointment(appointmentId);
+
     }, [appointmentId, loadAppointment]);
 
 
@@ -50,30 +53,30 @@ export const DetailsAppointment: React.FC<Props> = ({ history }) => {
     if (loadingInitial || !appointment) return <View><Text>Loading</Text></View>;
     return (
         <Background>
+            <Logo />
+            <Header>פרטי תור</Header>
+            <Header children={undefined}></Header>
 
-
-
-
+            <Header children={undefined}></Header>
             <Header>{appointment.attendee.displayName}</Header>
-            <Paragraph>
-                <Text style={styles.label}>{appointment.attendee.phoneNumber}</Text>
-            </Paragraph>
-            <Paragraph>
-                <Text style={styles.label}>{event.toLocaleDateString()}</Text>
-            </Paragraph>
-            <Paragraph>
-                <Text style={styles.label}>{appointment.appointmentDate?.split('').slice(16, 21)}</Text>
-            </Paragraph>
 
-            <Paragraph>
-                <Text style={styles.label}>יום  {dayheb}</Text>
-            </Paragraph>
-            <Button mode="contained" onPress={() => history.push('/Profile')}>
+            <Text style={stylesRegister.link}>{"   בחרת להסתפר אצל "}{appointment.barberName}</Text>
+
+            <Text style={stylesRegister.link}>{' '}{'  יום ' + dayheb}  {event.toLocaleDateString('he-IL', {
+                day: 'numeric', month: 'short'
+            }).replace(/ /g, '-')}</Text>
+
+            <Text style={stylesRegister.link}>{"   שעה "}{appointment.appointmentDate?.split('').slice(16, 21)}</Text>
+            <Text style={stylesRegister.link}>{'   שימו לב!! '}</Text>
+            <Text style={stylesRegister.link}>{'   על מנת שהתור יתווסף בחרו באישור '}</Text>
+            <Text style={stylesRegister.link}>{'   אחרת בחרו ביטול '}</Text>
+
+            <Button mode="contained" onPress={() => history.push(`/Confirmation/${appointment.appointmentId}`)}>
                 אישור
             </Button>
             <Button
                 mode="outlined"
-                onPress={() => deleteAppointment(appointment.appointmentDate).then(() => history.goBack())}
+                onPress={() => deleteAppointment(appointmentId).then(() => history.goBack())}
             >
                 ביטול
             </Button>
@@ -88,4 +91,4 @@ export const DetailsAppointment: React.FC<Props> = ({ history }) => {
 
 
 
-}
+})

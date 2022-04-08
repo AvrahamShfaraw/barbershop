@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { FlatList, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import agent from "../api/agent";
 import Background from "../component/Background";
 import Button from "../component/Button";
@@ -9,7 +9,9 @@ import { useStore } from "../stores/store";
 import uuid from 'react-native-uuid';
 // import { NativeStackScreenProps } from "@react-navigation/native-stack";
 // import { RootStackParamList } from "../types";
+import { IconButton } from "react-native-paper";
 
+import { StyleSheet } from 'react-native';
 
 
 import {
@@ -17,12 +19,13 @@ import {
     addDays,
     isBefore,
 } from 'date-fns';
-import { styles } from "../style";
-import { IconButton } from "react-native-paper";
+import { styles, stylesLogin } from "../style";
+import { ActivityIndicator } from "react-native-paper";
 import { utcToZonedTime } from "date-fns-tz";
 import Paragraph from "../component/Paragraph";
 import Logo from "../component/Logo";
 import { RouteComponentProps } from "react-router";
+import { useParams } from "../router/indexWeb";
 
 
 
@@ -34,9 +37,12 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
     const { appointmentStore } = useStore();
-    const { createAppointment, updateAppointment } = appointmentStore;
+    const { createAppointment, updateAppointment, loadAvailableAppointment, availableAppointment } = appointmentStore;
     const [loading, setLoading] = React.useState(false);
     const [isPass, setIsPass] = React.useState(true);
+    const [isDayPass, setIsDayPass] = useState(false);
+    const { item } = useParams<{ item: string }>();
+
 
     const range = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
@@ -50,7 +56,9 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
     const handleDateClick = (e: any) => {
         let newAppointment: AppointmentFormValues = {
-            appointmentDate: e
+            appointmentDate: e,
+            barberName: item
+
         };
         handleFormSubmit(newAppointment)
     }
@@ -72,7 +80,13 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
         async function loadAvailableAppointment() {
             const response = await agent.Appointments.list();
-            const appointments = response.map((a: { appointmentDate: string; }) => a.appointmentDate.split('T').join().slice(0, 24));
+            const appointments = response.map((a) => {
+
+                return {
+                    appointmentDate: a.appointmentDate.split('T').join().slice(0, 24),
+                    barberName: a.barberName
+                }
+            });
 
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             if (date.getDay() !== 6) {
@@ -82,9 +96,11 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
-                    const availbale = appointments.find((x: string) => x === check) ? false : true;
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
                     const past = isBefore(compareDate, new Date())
                     setIsPass(past);
+                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
+
 
 
                     if (availbale && !past && date.getDay() !== 6) {
@@ -95,7 +111,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                             availbale: availbale,
                             past: isBefore(compareDate, new Date()),
                             appointmentDate: check,
-                            x: appointments.find((x: string) => x === check)
+                            x: appointments.find((x) => x.appointmentDate === check)
                         };
 
                     }
@@ -107,7 +123,8 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
-                    if ((date.getDay() === new Date().getDay()) && (date.getDay() > new Date().getDay())) setIsPass(false);
+                    console.log(newdata);
+                    if (date.getDay() === new Date().getDay()) setIsPass(true);
                     else {
                         setIsPass(false);
                     }
@@ -185,47 +202,58 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
 
 
-    if (!loading) return <Header>loading..</Header>
+    if (!schedule && !loading) return <Header>loading</Header>
+
 
     // //format(date, 'EEEE d MMM y')
     return (
         <Background>
             <Logo />
-            <View>
-                <Paragraph>
-                    The easiest way to start with your amazing application.
-                </Paragraph>
+            <Header>בחר תור</Header>
+            <Header children={undefined}></Header>
+            <Header children={undefined}></Header>
+            {
+                !isPass ? (
+                    <View >
+                        <Text style={{ color: 'white', fontSize: 25 }}>
+                            <TouchableOpacity onPress={handlePrevDay}>
+                                {isPass ? (<Text>{''}</Text>) : (
+                                    <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
+                            </TouchableOpacity>
+                            {'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
+                                day: 'numeric', month: 'short'
+                            }).replace(/ /g, '-')}
+                            <TouchableOpacity onPress={handleNextDay}>
+                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
+                            </TouchableOpacity>
+                        </Text>
+                        <Header children={undefined}></Header>
+                    </View>
+                ) : (
+                    <View >
+                        <Text style={{ color: 'white', fontSize: 25 }}>
+                            <TouchableOpacity onPress={handlePrevDay}>
+                                {isPass ? (<Text>{''}</Text>) : (
+                                    <Text style={{ color: 'balck', fontSize: 20 }} >{'אחורה'}</Text>)}
+                            </TouchableOpacity>
+                            {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
+                                day: 'numeric', month: 'short'
+                            }).replace(/ /g, '-')}
+                            <TouchableOpacity onPress={handleNextDay}>
+                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
+                            </TouchableOpacity>
+                        </Text>
+                        <Header children={undefined}></Header>
+                    </View>
 
-            </View>
-            <View >
-
-
-
-                <Text style={styles.label}><Button icon={'arow-next'} style={{ width: 'auto', height: 35, backgroundColor: 'white' }} onPress={handleNextDay} >
-                    <Text style={styles.label}>הבא</Text>
-                </Button>
-
-                    {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
-                        day: 'numeric', month: 'short'
-                    }).replace(/ /g, '-')} <Button disabled={isPass} icon={'arow-next'} style={{ width: 'auto', height: 35, backgroundColor: 'white' }} onPress={handlePrevDay} >
-                        <Text style={styles.label}>{isPass ? '' : 'אחורה'}</Text>
-                    </Button>
-
-                </Text>
-
-
-
-
-
-
-            </View>
+                )
+            }
             {
 
-                schedule !== null ? (
+                schedule && loading ? (
                     <FlatList
                         style={{
                             height: 250,
-
                             flexGrow: 0
                         }}
                         data={schedule}
@@ -234,33 +262,29 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                                 flex: 2,
                                 flexDirection: 'column',
                                 margin: 8,
-
-
                             }} >
 
                                 {
-
                                     <Button onPress={() => handleDateClick(item.appointmentDate)} >
                                         <div className="event_item" key={item.key}>
                                             <div className="ei_Title">{item.time}</div>
                                         </div>
                                     </Button>
-
                                 }
                             </ScrollView>}
                         numColumns={3}
                         scrollEnabled={true}
+
                     />
                 ) :
                     (
-                        <View style={styles.button} >
-                            <Text style={styles.label}>אין תורים פנויים ביום זה. בחר מועד אחר </Text>
-
-
+                        <View>
+                            <Text style={styles.label}>loading </Text>
                         </View>
                     )
 
             }
+
 
         </Background >
     )
@@ -268,7 +292,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
 
 
-function setOpen(arg0: boolean) {
-    return false;
-}
+
+
+
 

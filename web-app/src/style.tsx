@@ -29,6 +29,7 @@ export const styles = StyleSheet.create({
     label: {
         color: theme.colors.secondary,
         width: '100%',
+
     },
 });
 
@@ -55,7 +56,7 @@ export const stylesRegister = StyleSheet.create({
         paddingTop: 4,
     },
     label: {
-        color: '#062851',
+        color: theme.colors.primary,
     },
     button: {
         marginTop: 24,
@@ -67,6 +68,7 @@ export const stylesRegister = StyleSheet.create({
     link: {
         fontWeight: 'bold',
         color: theme.colors.primary,
+
     },
 });
 

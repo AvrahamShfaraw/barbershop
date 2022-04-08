@@ -14,6 +14,7 @@ namespace Persistence.Migrations
                 {
                     AppointmentId = table.Column<Guid>(type: "uuid", nullable: false),
                     AppointmentDate = table.Column<string>(type: "text", nullable: true),
+                    BarberName = table.Column<string>(type: "text", nullable: true),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>

@@ -57,30 +57,15 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
             password: 'Pa$$w0rd' + phoneNumber.value
         }
 
-        userStore.register(creds).then(() => history.push('/appointments'));
+        userStore.register(creds).then(() => history.push('/barberName'));
 
 
     }
 
     return (
         <Background>
-
-
             <Logo />
-
-            <Header>Create Account</Header>
-
-
-            {/* <TextInput
-                label="שם משתמש"
-                returnKeyType="next"
-                style={stylesRegister.input}
-                value={userName.value}
-                onChangeText={(text) => setUserName({ value: text, error: '' })}
-                error={!!userName.error}
-                errorText={userName.error}
-                autoComplete
-            /> */}
+            <Header>הרשמה</Header>
 
             <TextInput
                 label="שם מלא"
@@ -91,8 +76,6 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
                 error={!!displayName.error}
                 errorText={displayName.error}
                 autoComplete={'tel'}
-
-
             />
             <TextInput
                 label="מס טלפון"
@@ -105,30 +88,11 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
                 autoComplete={'tel'}
             />
 
-            {/* <TextInput
-                label="סיסמא"
-                returnKeyType="next"
-                style={stylesRegister.input}
-                value={password.value}
-                onChangeText={text => setPassword({ value: text, error: '' })}
-                error={!!password.error}
-                errorText={password.error}
-                autoComplete
-
-            /> */}
-
             <Button mode="contained"
                 onPress={_onSignUpPressed}
                 style={styles.button}>
-                Sign Up
+                הרשם
             </Button>
-
-            <View style={stylesRegister.row}>
-                <Text style={styles.label}>Already have an account? </Text>
-                <TouchableOpacity onPress={() => console.log('hello')}>
-                    <Text style={stylesRegister.link}>Login</Text>
-                </TouchableOpacity>
-            </View>
         </Background >
     );
 }

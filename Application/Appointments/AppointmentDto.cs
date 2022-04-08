@@ -7,6 +7,7 @@ namespace Application.Appointments
     {
         public Guid AppointmentId { get; set; }
         public string AppointmentDate { get; set; }
+        public string BarberName { get; set; }
         public string HostUsername { get; set; }
 
         public AttendeeDto Attendee { get; set; }

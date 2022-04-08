@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { makeAutoObservable, runInAction } from 'mobx'
 import agent from '../api/agent';
 import { Appointment, AppointmentFormValues, AvailableAppointment } from "../models/appointment";
@@ -14,16 +15,39 @@ export default class AppointmentStore {
     loadingInitial = false;
     appointmentDetails = new Map<string, any>();
     availableAppointment: AvailableAppointment[] | undefined = undefined;
+    appointments: Appointment[] | undefined = undefined;
 
     constructor() {
         makeAutoObservable(this)
     }
 
-    loadAvailableAppointment = async () => {
+    loadAllAppointments = async () => {
+
+
+
+    }
+
+    get appointmentsByDate() {
+        return Array.from(this.appointmentRegistry.values()).sort((a, b) =>
+            new Date(a.appointmentDate)!.getTime() - new Date(b.appointmentDate)!.getTime());
+    }
+
+    get groupedAppointments() {
+        return Object.entries(
+            this.appointmentsByDate.reduce((appointments, appointment) => {
+                const date = format(new Date(appointment.appointmentDate)!, 'dd MMM yyyy');
+                appointments[date] = appointments[date] ? [...appointments[date], appointment] : [appointment];
+                return appointments;
+            }, {} as { [key: string]: Appointment[] })
+
+
+        )
+    }
+
+    loadAvailableAppointment = async (date: Date) => {
         this.loadingInitial = true;
         try {
             const response = await agent.Appointments.list();
-            const date = new Date();
             const range = ['10:00', '10:20', '10:40', '11:00',
                 '11:20', '11:40', '12:00', '12:20', '12:40',
                 '13:00', '13:20', '13:40', '14:00', '14:20',
@@ -32,6 +56,7 @@ export default class AppointmentStore {
                 '18:40', '19:00', '19:20', '19:40', '20:00',
                 '20:20', '20:40', '21:00'];
 
+
             const AppointmentsDate = response.map((a: { appointmentDate: string; }) => a.appointmentDate.split('T').join().slice(0, 24));
 
             this.availableAppointment = range.map((hour, i) => {
@@ -39,7 +64,7 @@ export default class AppointmentStore {
 
                 return {
                     time: `${hour}`,
-
+                    key: i,
                     availbale:
                         AppointmentsDate.find((x: string) => x === check) ? false : true,
                     appointmentDate: check,
@@ -69,6 +94,8 @@ export default class AppointmentStore {
             this.loadingInitial = false;
         }
     }
+
+
 
     loadAppointment = async (appointmentId: string) => {
         let appointment = this.getAppointment(appointmentId)

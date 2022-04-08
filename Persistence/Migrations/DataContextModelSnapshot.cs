@@ -28,6 +28,9 @@ namespace Persistence.Migrations
                     b.Property<string>("AppointmentDate")
                         .HasColumnType("text");
 
+                    b.Property<string>("BarberName")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean");
 

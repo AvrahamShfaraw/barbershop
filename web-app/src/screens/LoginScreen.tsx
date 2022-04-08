@@ -51,22 +51,14 @@ export const LoginScreen: React.FC<Props> = ({ history }) => {
             return;
         }
 
-        userStore.login(creds).then(() => history.push('/appointments'))
+        userStore.login(creds).then(() => history.push('/barberName'))
     };
 
 
     return (
         <Background>
-
             <Logo />
-
-            <Header>Welcome back.</Header>
-
-
-
-
-
-
+            <Header>התחברות</Header>
             <TextInput
 
                 label="מס טלפון"
@@ -80,26 +72,15 @@ export const LoginScreen: React.FC<Props> = ({ history }) => {
 
             />
 
-            <View >
-                <TouchableOpacity
-                    onPress={() => console.log('hello')}
-                >
-                    <Text style={styles.label}>Forgot your password?</Text>
-                </TouchableOpacity>
-            </View>
 
             <Button mode="contained"
                 onPress={_onSignInPressed}
                 style={styles.button}>
-                Login
+                התחבר
             </Button>
 
-            <View style={stylesLogin.row}>
-                <Text style={styles.label}>Don’t have an account? </Text>
-                <TouchableOpacity onPress={() => console.log('hello')}>
-                    <Text style={stylesLogin.link}>Sign up</Text>
-                </TouchableOpacity>
-            </View>
+
+
         </Background>
     );
 }

@@ -10,7 +10,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220327151444_InitialCreate")]
+    [Migration("20220402141006_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AppointmentDate")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BarberName")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsCancelled")

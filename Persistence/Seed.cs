@@ -51,6 +51,7 @@ namespace Persistence
                             {
                                 new Appointment {
                                     AppointmentDate ="Fri Feb 11 2022 11:00:00 GMT+0200 (שעון ישראל (חורף))",
+                                    BarberName ="סלמון",
                                     Attendee = new AppointmentAttendee{
                                         Customer = users[0],
                                         IsHost = true
@@ -59,14 +60,17 @@ namespace Persistence
 
                                 new Appointment {
                                     AppointmentDate = "Fri Feb 11 2022 11:00:00 GMT+0200 (שעון ישראל (חורף))",
+                                    BarberName ="סלמון",
                                     Attendee = new AppointmentAttendee{
                                         Customer = users[1],
-                                        IsHost = true
+                                        IsHost = true,
+
                                     }
 
                                 },
                                 new Appointment {
                                     AppointmentDate = "Fri Feb 11 2022 11:00:00 GMT+0200 (שעון ישראל (חורף))",
+                                    BarberName ="יהודה",
                                     Attendee = new AppointmentAttendee{
                                         Customer = users[2],
                                         IsHost = true

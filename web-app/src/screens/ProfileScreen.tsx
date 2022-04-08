@@ -12,6 +12,7 @@ import {
 } from 'date-fns';
 import { utcToZonedTime } from "date-fns-tz";
 import { RouteComponentProps } from "react-router";
+import Header from "../component/Header";
 
 // type ProfileScreen = NativeStackScreenProps<RootStackParamList, 'פרופיל'>
 interface Props extends RouteComponentProps { }
@@ -20,6 +21,7 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     const [isPass, setIsPass] = React.useState(false);
     const { userStore } = useStore()
     const { user } = userStore;
+
 
     useEffect(() => {
 
@@ -35,8 +37,8 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
                 setIsPass(past)
                 if (!past)
                     return {
-                        id: appointment.appointmentId,
-                        userName: appointment.attendee.userName,
+                        appointmentId: appointment.appointmentId,
+                        displayName: appointment.attendee.displayName,
                         date: appointment.appointmentDate.split('T').join().slice(0, 21),
                         past: past,
 
@@ -49,16 +51,18 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
 
             )
 
-            const userAppointment = data.filter(item => typeof item !== 'undefined' && item.userName === user?.userName);
+            const userAppointment = data.filter(item => typeof item !== 'undefined');
             if (userAppointment.length > 0) {
                 console.log(isPass);
+                const sortedAsc = userAppointment.sort(
+                    (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime(),
+                );
 
-                setSchedule(userAppointment)
+                setSchedule(sortedAsc)
                 console.log(userAppointment);
             } else {
                 setSchedule(null);
             }
-
 
 
         }
@@ -97,6 +101,9 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     return (
         <Background>
             <Logo />
+            <Header>התורים שלך</Header>
+            <Header children={undefined}></Header>
+            <Header children={undefined}></Header>
             <FlatList
                 data={schedule}
                 renderItem={({ item }) =>
@@ -104,12 +111,12 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
 
                         {
                             (
-                                <Button onPress={() => history.goBack()} >
-                                    <div className="event_item" key={item.id}>
+                                <Button onPress={() => history.push(`/DetailsAppointments/${item.appointmentId}`)} >
+                                    <div className="event_item" key={item.appointmentId}>
                                         <div className="ei_Title">{new Date(item.date).toLocaleDateString('he-IL', {
                                             day: 'numeric', month: 'short'
                                         }).replace(/ /g, '-').toString() + ' יום ' + func(new Date(item.date).getDay())}
-                                            {' ' + item.date.split('T').join().slice(16, 21)}
+                                            {' ' + item.date.split('T').join().slice(16, 21) + ' ' + item.displayName}
                                         </div>
                                     </div>
                                 </Button>
@@ -123,7 +130,7 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
             />
             <Button
                 mode="outlined"
-                onPress={() => history.push('/appointments')}
+                onPress={() => console.log('hello')}
             >
                 הוספת תור חדש
             </Button>

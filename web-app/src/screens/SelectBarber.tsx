@@ -26,7 +26,7 @@ export const SelectBarber: React.FC<Props> = ({ history }) => {
                         flexGrow: 0
                     }}
                     data={range}
-                    renderItem={({ item }) =>
+                    renderItem={({ item, index }) =>
                         <ScrollView style={{
                             flex: 2,
                             flexDirection: 'column',
@@ -35,7 +35,7 @@ export const SelectBarber: React.FC<Props> = ({ history }) => {
 
                             {
                                 <Button onPress={() => history.push(`/dashboard/${item}`)} >
-                                    <div className="event_item" key={item}>
+                                    <div className="event_item" key={index}>
                                         <div className="ei_Title">{item}</div>
                                     </div>
                                 </Button>

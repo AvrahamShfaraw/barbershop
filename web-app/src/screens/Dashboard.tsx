@@ -26,6 +26,7 @@ import Paragraph from "../component/Paragraph";
 import Logo from "../component/Logo";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "../router/indexWeb";
+import { el } from "date-fns/locale";
 
 
 
@@ -37,20 +38,34 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
     const { appointmentStore } = useStore();
-    const { createAppointment, updateAppointment, loadAvailableAppointment, availableAppointment } = appointmentStore;
+    const { createAppointment, updateAppointment, loadAvailableAppointment, availableAppointment, deleteAppointment } = appointmentStore;
     const [loading, setLoading] = React.useState(false);
     const [isPass, setIsPass] = React.useState(true);
     const [isDayPass, setIsDayPass] = useState(false);
     const { item } = useParams<{ item: string }>();
 
 
-    const range = ['10:00', '10:20', '10:40', '11:00',
+    const range1 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
         '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'
         , '16:40', '17:00', '17:20', '17:40', '18:00', '18:20',
         '18:40', '19:00', '19:20', '19:40', '20:00',
         '20:20', '20:40', '21:00'];
+
+    const range2 = ['10:00', '10:20', '10:40', '11:00',
+        '11:20', '11:40', '12:00', '12:20', '12:40',
+        '13:00', '13:20', '13:40', '14:00', '14:20',
+        '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'
+        , '16:40', '17:00', '17:20', '17:40', '18:00', '18:20',
+        '18:40', '19:00', '19:20', '19:40', '20:00',
+        '20:20', '20:40', '21:00', '21:20', '21:40', '22:00', '22:20',
+        '22:40', '23:00'];
+    const range3 = ['10:00', '10:20', '10:40', '11:00',
+        '11:20', '11:40', '12:00', '12:20', '12:40',
+        '13:00', '13:20', '13:40', '14:00', '14:20',
+        '14:40', '15:00', '15:20', '15:40', '16:00'];
+
 
 
 
@@ -89,9 +104,9 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
             });
 
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            if (date.getDay() !== 6) {
+            if (date.getDay() !== 6 && date.getDay() === 4) {
 
-                const data = range.map((hour, i) => {
+                const data = range2.map((hour, i) => {
                     const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
@@ -134,6 +149,90 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                 }
 
 
+            } else if (date.getDay() === 5) {
+                const data = range3.map((hour, i) => {
+                    const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
+                    const compareDate = utcToZonedTime(checkDate, timezone);
+
+                    var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
+                    const past = isBefore(compareDate, new Date())
+                    setIsPass(past);
+                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
+
+
+
+                    if (availbale && !past && date.getDay() !== 6) {
+                        return {
+                            key: i,
+                            time: `${hour}`,
+                            day: date.getDay(),
+                            availbale: availbale,
+                            past: isBefore(compareDate, new Date()),
+                            appointmentDate: check,
+                            x: appointments.find((x) => x.appointmentDate === check)
+                        };
+
+                    }
+
+
+                });
+                const newdata = data.filter((item) => typeof item !== 'undefined');
+
+
+                if (newdata.length > 0) {
+                    setSchedule(newdata);
+                    console.log(newdata);
+                    if (date.getDay() === new Date().getDay()) setIsPass(true);
+                    else {
+                        setIsPass(false);
+                    }
+
+                } else {
+                    setSchedule(null);
+                }
+            } else if (date.getDay() !== 6) {
+                const data = range1.map((hour, i) => {
+                    const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
+                    const compareDate = utcToZonedTime(checkDate, timezone);
+
+                    var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
+                    const past = isBefore(compareDate, new Date())
+                    setIsPass(past);
+                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
+
+
+
+                    if (availbale && !past && date.getDay() !== 6) {
+                        return {
+                            key: i,
+                            time: `${hour}`,
+                            day: date.getDay(),
+                            availbale: availbale,
+                            past: isBefore(compareDate, new Date()),
+                            appointmentDate: check,
+                            x: appointments.find((x) => x.appointmentDate === check)
+                        };
+
+                    }
+
+
+                });
+                const newdata = data.filter((item) => typeof item !== 'undefined');
+
+
+                if (newdata.length > 0) {
+                    setSchedule(newdata);
+                    console.log(newdata);
+                    if (date.getDay() === new Date().getDay()) setIsPass(true);
+                    else {
+                        setIsPass(false);
+                    }
+
+                } else {
+                    setSchedule(null);
+                }
             } else {
 
                 const data = null;
@@ -279,7 +378,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                 ) :
                     (
                         <View>
-                            <Text style={styles.label}>loading </Text>
+                            <Text style={styles.label}>אין תורים זמינים ביום זה </Text>
                         </View>
                     )
 

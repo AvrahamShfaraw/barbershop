@@ -34,7 +34,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
-            if (user == null) return Unauthorized();
+            if (user == null) return BadRequest("מס זה אינו קיים במערכת");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
@@ -44,7 +44,7 @@ namespace API.Controllers
 
             }
 
-            return Unauthorized();
+            return BadRequest("מס זה אינו קיים במערכת");
         }
 
         [HttpPost("register")]
@@ -52,7 +52,7 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
             {
-                return BadRequest("User name token");
+                return BadRequest("מספר זה קיים במערכת");
             }
 
             var user = new Customer
@@ -69,7 +69,7 @@ namespace API.Controllers
 
             }
 
-            return BadRequest("Problem registering user");
+            return BadRequest("פרטי הרישום לא תקינים");
         }
 
         [Authorize]

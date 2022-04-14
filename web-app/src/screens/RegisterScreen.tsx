@@ -22,8 +22,19 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
 
     const [displayName, setDisplayName] = useState({ value: '', error: '' });
     const [phoneNumber, setPhoneNumber] = useState({ value: '', error: '' });
+    const [error, setSetErrort] = useState('');
 
+    const isSalamon = (name: string) => {
+        if (name === 'user0522540642') return true;
+        else return false;
+        ;
+    }
 
+    const isYoda = (name: string) => {
+        if (name === 'user0527701195') return true;
+        else return false;
+        ;
+    }
 
     const dispalyNameValidate = (str: string) => {
         if (str === '')
@@ -57,7 +68,17 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
             password: 'Pa$$w0rd' + phoneNumber.value
         }
 
-        userStore.register(creds).then(() => history.push('/barberName'));
+        userStore.register(creds).then(() => {
+            if (isSalamon(creds.userName!)) {
+                history.push(`/profile/${creds.userName}`)
+
+            } else if (isYoda(creds.userName!)) {
+                history.push(`/profile/${creds.userName}`)
+            }
+            else history.push('/barberName');
+
+
+        }).catch(erorr => setSetErrort(erorr.response.data));
 
 
     }
@@ -87,6 +108,7 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
                 errorText={phoneNumber.error}
                 autoComplete={'tel'}
             />
+            <Text style={styles.label}>{error ? error : ''}</Text>
 
             <Button mode="contained"
                 onPress={_onSignUpPressed}

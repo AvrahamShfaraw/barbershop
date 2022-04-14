@@ -31,7 +31,7 @@ export const Routes = () => {
                 <Route exact path='/DetailsAppointments/:appointmentId' component={DetailsAppointment} />
                 <Route exact path='/Confirmation/:appointmentId' component={ConfirmationScreen} />
                 <Route exact path='/ProductList' component={ProductList} />
-                <Route exact path={'/Profile'} component={ProfileScreen} />
+                <Route exact path={'/Profile/:username'} component={ProfileScreen} />
             </Switch>
         </Router>
 

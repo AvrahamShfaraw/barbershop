@@ -65,15 +65,20 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                 const compareDate = utcToZonedTime(checkDate, timezone);
                 const past = isBefore(compareDate, new Date());
                 setIsPass(past)
-                if (!past)
+                if (!past) {
                     return {
                         appointmentId: appointment.appointmentId,
+                        barberName: appointment.barberName,
                         userName: appointment.attendee.userName,
                         appointmentDate: appointment.appointmentDate.split('T').join().slice(0, 21),
                         past: past,
 
 
                     }
+                } else {
+                    deleteAppointment(appointment.appointmentId);
+                }
+
 
 
             }
@@ -83,10 +88,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
 
             const userAppointment = data.filter(item => typeof item !== 'undefined' && item.userName === user?.userName);
             if (userAppointment.length > 0) {
-                console.log(isPass);
-
                 setSchedule(userAppointment)
-                console.log(userAppointment);
             } else {
                 setSchedule(null);
             }
@@ -109,31 +111,17 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
             {userStore.isLoggedIn ? (
 
 
-                <><><Header>{userStore.user?.displayName}</Header></>
-                    <Button onPress={() => { userStore.logout() }}>התנתק</Button>
+                user?.userName === 'user0522540642' ? (
 
-                    {
-                        schedule ? (
-                            <><><FlatList
-                                data={schedule}
-                                renderItem={({ item }) => <ScrollView>
 
-                                    {(
-                                        <><Button onPress={() => { history.push(`/delete/${item.appointmentId}`); }}>{'לביטול התור לחץ כאן'}</Button>
-                                            <Button mode="outlined" onPress={() => history.push(`/DetailsAppointments/${item.appointmentId}`)}>
-                                                <div className="event_item" key={item.appointmentId}>
-                                                    <div className="ei_Title">{new Date(item.appointmentDate).toLocaleDateString('he-IL', {
-                                                        day: 'numeric', month: 'short'
-                                                    }).replace(/ /g, '-').toString() + ' יום ' + func(new Date(item.date).getDay())}
-                                                        {' ' + item.appointmentDate.split('T').join().slice(16, 21)}
-                                                    </div>
-                                                </div>
-                                            </Button></>
+                    <><><Header>{userStore.user?.displayName}</Header></>
+                        <Button onPress={() => { userStore.logout() }}>התנתק</Button>
+                        <Button onPress={() => history.push(`/profile/${user.userName}`)}>
+                            <Text>רשימת התורים שלי</Text></Button>
 
-                                    )}
 
-                                </ScrollView>} />
-
+                        {
+                            <>
                                 <View style={{ flexDirection: "row" }}>
                                     <View style={styles.container}>
 
@@ -188,8 +176,9 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                                         <Text style={styles.buttonTextStyle}>
                                             איך מגיעים
                                         </Text>
-                                    </View></View>
-                            </><View style={{ flexDirection: "row" }}>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row" }}>
                                     <View style={styles.container}>
 
                                         <TouchableOpacity
@@ -238,127 +227,264 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                                             וואטסאפ יהודה
                                         </Text>
                                     </View>
-                                </View><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text></>
+                                </View></>
+
+
+                        }
+
+                    </>
+                ) : (
+                    <>
+                        <><><Header>{userStore.user?.displayName}</Header></>
+                            <Button onPress={() => { userStore.logout() }}>התנתק</Button>
+
+                            {
+                                schedule ? (
+                                    <><><FlatList
+                                        data={schedule}
+                                        renderItem={({ item }) => <ScrollView>
+
+                                            {(
+                                                <><Button onPress={() => { history.push(`/delete/${item.appointmentId}`); }}>{'לביטול התור לחץ כאן'}</Button>
+                                                    <Button mode="outlined" onPress={() => history.push(`/DetailsAppointments/${item.appointmentId}`)}>
+                                                        <div className="event_item" key={item.appointmentId}>
+                                                            <div className="ei_Title">{new Date(item.appointmentDate).toLocaleDateString('he-IL', {
+                                                                day: 'numeric', month: 'short'
+                                                            }).replace(/ /g, '-').toString() + ' יום ' + func(new Date(item.appointmentDate).getDay())}
+                                                                {' ' + item.appointmentDate.split('T').join().slice(16, 21) + '' + "  ל" + item.barberName}
+                                                            </div>
+                                                        </div>
+                                                    </Button></>
+
+                                            )}
+
+                                        </ScrollView>} />
+
+                                        <View style={{ flexDirection: "row" }}>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => history.push('/service')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/barber-shop.png")}
+                                                        style={styles.buttonImageIconStyle} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    שירותי מספרה
+                                                </Text>
+                                            </View>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => history.push('/ProductList')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/cart.png")}
+                                                        style={{
+                                                            padding: 15,
+                                                            margin: 15,
+                                                            height: 70,
+                                                            width: 70,
+                                                            resizeMode: 'stretch',
+                                                        }} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    המוצרים שלנו
+                                                </Text>
+                                            </View>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => history.push('/contact')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/placeholder.png")}
+                                                        style={styles.buttonImageIconStyle} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    איך מגיעים
+                                                </Text>
+                                            </View></View>
+                                    </><View style={{ flexDirection: "row" }}>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => Linking.openURL('https://instagram.com/s.ybarbers?utm_medium=copy_link')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/instagram (4).png")}
+                                                        style={styles.buttonImageIconStyle} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    אינסטגרם
+                                                </Text>
+                                            </View>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => Linking.openURL('https://wa.me/972522540642')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/whatsapp.png")}
+                                                        style={styles.buttonImageIconStyle} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    וואטסאפ סלמון
+                                                </Text>
+                                            </View>
+                                            <View style={styles.container}>
+
+                                                <TouchableOpacity
+                                                    style={styles.buttonFacebookStyle}
+                                                    activeOpacity={0.5}
+                                                    onPress={() => Linking.openURL('https://wa.me/972527701195')}
+                                                >
+                                                    <Image
+                                                        source={require("../assets/whatsapp.png")}
+                                                        style={styles.buttonImageIconStyle} />
+                                                    <View style={styles.buttonIconSeparatorStyle} />
+                                                </TouchableOpacity>
+                                                <Text style={styles.buttonTextStyle}>
+                                                    וואטסאפ יהודה
+                                                </Text>
+                                            </View>
+                                        </View></>
 
 
 
 
-                        ) : <><Button onPress={() => history.push('/barberName')}>
-                            <Text>הזמנת תור אונלייין</Text></Button><Header children={undefined}></Header>
-                            <View style={{ flexDirection: "row" }}>
-                                <View style={styles.container}>
+                                ) : <><Button onPress={() => history.push('/barberName')}>
+                                    <Text>הזמנת תור אונלייין</Text></Button><Header children={undefined}></Header>
+                                    <View style={{ flexDirection: "row" }}>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => history.push('/service')}
-                                    >
-                                        <Image
-                                            source={require("../assets/barber-shop.png")}
-                                            style={styles.buttonImageIconStyle} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        שירותי מספרה
-                                    </Text>
-                                </View>
-                                <View style={styles.container}>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => history.push('/service')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/barber-shop.png")}
+                                                    style={styles.buttonImageIconStyle} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                שירותי מספרה
+                                            </Text>
+                                        </View>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => history.push('/ProductList')}
-                                    >
-                                        <Image
-                                            source={require("../assets/cart.png")}
-                                            style={{
-                                                padding: 15,
-                                                margin: 15,
-                                                height: 70,
-                                                width: 70,
-                                                resizeMode: 'stretch',
-                                            }} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        המוצרים שלנו
-                                    </Text>
-                                </View>
-                                <View style={styles.container}>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => history.push('/ProductList')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/cart.png")}
+                                                    style={{
+                                                        padding: 15,
+                                                        margin: 15,
+                                                        height: 70,
+                                                        width: 70,
+                                                        resizeMode: 'stretch',
+                                                    }} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                המוצרים שלנו
+                                            </Text>
+                                        </View>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => history.push('/contact')}
-                                    >
-                                        <Image
-                                            source={require("../assets/placeholder.png")}
-                                            style={styles.buttonImageIconStyle} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        איך מגיעים
-                                    </Text>
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                                <View style={styles.container}>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => history.push('/contact')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/placeholder.png")}
+                                                    style={styles.buttonImageIconStyle} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                איך מגיעים
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: "row" }}>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => Linking.openURL('https://instagram.com/s.ybarbers?utm_medium=copy_link')}
-                                    >
-                                        <Image
-                                            source={require("../assets/instagram (4).png")}
-                                            style={styles.buttonImageIconStyle} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        אינסטגרם
-                                    </Text>
-                                </View>
-                                <View style={styles.container}>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => Linking.openURL('https://instagram.com/s.ybarbers?utm_medium=copy_link')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/instagram (4).png")}
+                                                    style={styles.buttonImageIconStyle} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                אינסטגרם
+                                            </Text>
+                                        </View>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => Linking.openURL('https://wa.me/972522540642')}
-                                    >
-                                        <Image
-                                            source={require("../assets/whatsapp.png")}
-                                            style={styles.buttonImageIconStyle} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        וואטסאפ סלמון
-                                    </Text>
-                                </View>
-                                <View style={styles.container}>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => Linking.openURL('https://wa.me/972522540642')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/whatsapp.png")}
+                                                    style={styles.buttonImageIconStyle} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                וואטסאפ סלמון
+                                            </Text>
+                                        </View>
+                                        <View style={styles.container}>
 
-                                    <TouchableOpacity
-                                        style={styles.buttonFacebookStyle}
-                                        activeOpacity={0.5}
-                                        onPress={() => Linking.openURL('https://wa.me/972527701195')}
-                                    >
-                                        <Image
-                                            source={require("../assets/whatsapp.png")}
-                                            style={styles.buttonImageIconStyle} />
-                                        <View style={styles.buttonIconSeparatorStyle} />
-                                    </TouchableOpacity>
-                                    <Text style={styles.buttonTextStyle}>
-                                        וואטסאפ יהודה
-                                    </Text>
-                                </View>
-                            </View><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text></>
+                                            <TouchableOpacity
+                                                style={styles.buttonFacebookStyle}
+                                                activeOpacity={0.5}
+                                                onPress={() => Linking.openURL('https://wa.me/972527701195')}
+                                            >
+                                                <Image
+                                                    source={require("../assets/whatsapp.png")}
+                                                    style={styles.buttonImageIconStyle} />
+                                                <View style={styles.buttonIconSeparatorStyle} />
+                                            </TouchableOpacity>
+                                            <Text style={styles.buttonTextStyle}>
+                                                וואטסאפ יהודה
+                                            </Text>
+                                        </View>
+                                    </View></>
 
 
-                    }
+                            }
 
-                </>
-
+                        </></>
+                )
             ) : <><Button onPress={() => history.push('/Home')}>
-                <Text>הזמנת תור אונלייין</Text></Button><Header children={undefined}></Header><View style={{ flexDirection: "row" }}>
+                <Text>בא נתחיל התחבר/הרשם</Text></Button><Header children={undefined}></Header><View style={{ flexDirection: "row" }}>
                     <View style={styles.container}>
 
                         <TouchableOpacity
@@ -463,7 +589,21 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                         </Text>
                     </View>
                 </View>
-                <Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Header children={undefined}></Header><Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text>
+                <Header children={undefined}></Header>
+                <Header children={undefined}></Header>
+                <Header children={undefined}></Header>
+                <Header children={undefined}></Header>
+                <Header children={undefined}></Header>
+                <View>
+                    <TouchableOpacity
+
+
+                        onPress={() => Linking.openURL('https://wa.me/972504214777')}
+                    >
+                        <Text style={stylesRegister.link}>אהבת את האפליקציה? רוצה גם? לחץ כאן</Text>
+                    </TouchableOpacity>
+                </View>
+                <Header children={undefined}></Header><Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text>
             </>
 
             }

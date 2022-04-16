@@ -22,13 +22,14 @@ import { utcToZonedTime } from "date-fns-tz";
 import Logo from "../component/Logo";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "../router/indexWeb";
+import { observer } from "mobx-react-lite";
 
 
 
 // type DashboardScreenProps = NativeStackScreenProps<RootStackParamList, 'תורים'>
 interface Props extends RouteComponentProps { }
 
-export const Dashboard: React.FC<Props> = ({ history }) => {
+export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
@@ -342,7 +343,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
         </Background >
     )
-}
+})
 
 
 

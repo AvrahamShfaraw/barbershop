@@ -86,6 +86,7 @@ export default class AppointmentStore {
             const appointments = await agent.Appointments.list();
             appointments.forEach((appointment: Appointment | undefined) => {
                 this.selectedAppointment = appointment;
+                this.appointments?.push(appointment!);
 
             })
             this.loadingInitial = false;

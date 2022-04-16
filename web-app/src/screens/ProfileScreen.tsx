@@ -32,10 +32,11 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     const [date, setDate] = React.useState(new Date());
     const { userStore } = useStore();
     const [loading, setLoading] = React.useState(false);
-    const [isPass, setIsPass] = React.useState(true);
-    const [isDayPass, setIsDayPass] = useState(false);
     const { username } = useParams<{ username: string }>();
     const { user } = userStore;
+    const { appointmentStore } = useStore();
+
+
 
 
 
@@ -46,18 +47,18 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
 
     useEffect(() => {
 
-        async function loadUserAppointment() {
-            const response = await agent.Appointments.list();
 
+        async function loadUserAppointment() {
+
+            const response = agent.Appointments.list();
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-            const data = response.map((appointment) => {
+            const data = (await response).map((appointment) => {
                 if (user?.userName === username && appointment.barberName === user.displayName) {
 
                     const checkDate = Date.parse(appointment.appointmentDate)
                     const compareDate = utcToZonedTime(checkDate, timezone);
                     const past = isBefore(compareDate, new Date());
-                    setIsPass(past);
                     console.log(past);
                     if (!past) {
                         return {
@@ -96,7 +97,7 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
         loadUserAppointment();
 
 
-    }, [date, isPass])
+    }, [date])
 
 
 
@@ -107,7 +108,7 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
         const compareDate = utcToZonedTime(checkDate, timezone);
 
         const past = isBefore(compareDate, new Date())
-        setIsPass(past);
+
 
         if (!past && date.getDay() !== 6) {
             if (date.getDay() === 0) {
@@ -187,7 +188,7 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     return (
         <Background>
             <Logo />
-            <Header>בחר תור</Header>
+            <Header>התורים שלי</Header>
             <Header children={undefined}></Header>
             <Header children={undefined}></Header>
             {
@@ -249,6 +250,14 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
                     )
 
             }
+
+            <Button
+                mode="outlined"
+                style={styles.button}
+                onPress={() => history.push('/')}
+            >
+                בחזרה למסך הראשי
+            </Button>
 
 
         </Background >

@@ -289,7 +289,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                     <Text style={{ color: 'white', fontSize: 25 }}>
                         <TouchableOpacity onPress={handlePrevDay}>
                             {date.getDay() === new Date().getDay() ? (<Text>{''}</Text>) : (
-                                <Text style={{ color: 'balck', fontSize: 20 }} >{'אחורה'}</Text>)}
+                                <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
                         </TouchableOpacity>
                         {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
                             day: 'numeric', month: 'short'

@@ -1,6 +1,6 @@
 // import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { Text } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
 import Button from "../component/Button";

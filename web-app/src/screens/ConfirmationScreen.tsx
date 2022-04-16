@@ -1,13 +1,11 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Text, View, Image, StyleSheet } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
-import Paragraph from "../component/Paragraph";
 import { useParams } from "../router/indexWeb";
 import { useStore } from "../stores/store";
 import { styles, stylesRegister } from "../style";
@@ -17,7 +15,7 @@ export const ConfirmationScreen: React.FC<Props> = observer(({ history }) => {
 
     const { appointmentId } = useParams<{ appointmentId: string }>();
     const { appointmentStore } = useStore();
-    const { deleteAppointment, loadAppointment, selectedAppointment: appointment, loadingInitial } = appointmentStore;
+    const { loadAppointment, selectedAppointment: appointment, loadingInitial } = appointmentStore;
 
 
     useEffect(() => {

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View, Image, Linking, FlatList, ScrollView } from "react-native";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Logo from "../component/Logo";
-import Paragraph from "../component/Paragraph";
 import { StyleSheet } from 'react-native';
 import Header from "../component/Header";
 import { stylesRegister } from "../style";
 import { RouteComponentProps } from "react-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useStore } from "../stores/store";
 import agent from "../api/agent";
 import { utcToZonedTime } from "date-fns-tz";
@@ -21,7 +19,6 @@ import { observer } from "mobx-react-lite";
 interface Props extends RouteComponentProps { }
 export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
     const [schedule, setSchedule] = React.useState<any>([]);
-    const [isPass, setIsPass] = React.useState(false);
     const { userStore } = useStore()
     const { user } = userStore;
     const { appointmentStore } = useStore();
@@ -64,7 +61,6 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                 const checkDate = Date.parse(appointment.appointmentDate)
                 const compareDate = utcToZonedTime(checkDate, timezone);
                 const past = isBefore(compareDate, new Date());
-                setIsPass(past)
                 if (!past) {
                     return {
                         appointmentId: appointment.appointmentId,
@@ -591,9 +587,6 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                 </View>
                 <Header children={undefined}></Header>
                 <Header children={undefined}></Header>
-                <Header children={undefined}></Header>
-                <Header children={undefined}></Header>
-                <Header children={undefined}></Header>
                 <View>
                     <TouchableOpacity
 
@@ -603,7 +596,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                         <Text style={stylesRegister.link}>אהבת את האפליקציה? רוצה גם? לחץ כאן</Text>
                     </TouchableOpacity>
                 </View>
-                <Header children={undefined}></Header><Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text>
+                <Text style={stylesRegister.link}>{'\u00A9'} Development&Designed By Avraham-Shfarawo.</Text>
             </>
 
             }

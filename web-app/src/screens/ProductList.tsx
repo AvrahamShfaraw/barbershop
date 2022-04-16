@@ -1,13 +1,9 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { FlatList, ScrollView, Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
-import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
-import Paragraph from "../component/Paragraph";
-import { stylesRegister } from "../style";
 interface Props extends RouteComponentProps { }
 
 export const ProductList: React.FC<Props> = ({ history }) => {

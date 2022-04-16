@@ -2,8 +2,8 @@
 import { isBefore } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Text } from "react-native";
 import { RouteComponentProps } from "react-router";
 import agent from "../api/agent";
 import Background from "../component/Background";
@@ -11,7 +11,6 @@ import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
 import TextInput from "../component/TextInput";
-import { Appointment } from "../models/appointment";
 import { UserFormValues } from "../models/user";
 import { useStore } from "../stores/store";
 import { styles, stylesLogin } from "../style";
@@ -22,7 +21,6 @@ interface Props extends RouteComponentProps { }
 
 export const LoginScreen: React.FC<Props> = observer(({ history }) => {
     const { userStore } = useStore();
-    const [isPass, setIsPass] = useState(false);
     const [check, setCheck] = useState(false);
     const [erorr, setErorrs] = useState('');
 
@@ -52,7 +50,6 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
                         appointmentDate: appointment.appointmentDate
                     };
 
-                setIsPass(past);
 
 
 

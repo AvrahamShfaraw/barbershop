@@ -1,12 +1,9 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { RouteComponentProps } from "react-router";
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Background from "../component/Background";
-import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
-import Paragraph from "../component/Paragraph";
 import { stylesRegister } from "../style";
 interface Props extends RouteComponentProps { }
 
@@ -23,7 +20,7 @@ export const ContactScreen: React.FC<Props> = ({ history }) => {
             <Text style={stylesRegister.label}>רוגוזין 43, אשדוד</Text>
 
             <Image
-                source={require("../assets/whatsapp.png")}
+                source={require("../assets/Phone_icon.png")}
                 style={styles1.buttonImageIconStyle}
             />
             <Text style={stylesRegister.link}>טלפון</Text>
@@ -35,13 +32,16 @@ export const ContactScreen: React.FC<Props> = ({ history }) => {
             <TouchableOpacity
                 onPress={() => Linking.openURL(' https://waze.com/ul?ll=31.80117,34.64054&navigate=yes')}
             >
+
                 <Image
                     source={require("../assets/waze.png")}
                     style={styles1.buttonImageIconStyle}
                 />
-                <View style={styles1.buttonIconSeparatorStyle} />
 
+                <View style={styles1.buttonIconSeparatorStyle} />
+                <Text style={{ color: 'white' }}>{'   ' + "לחץ עליי"}</Text>
             </TouchableOpacity>
+
             <Text style={{ color: 'white' }}>WAZE</Text>
             <Header children={undefined}></Header>
             <Image

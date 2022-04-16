@@ -1,42 +1,109 @@
-// import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import agent from "../api/agent";
 import Background from "../component/Background";
 import Button from "../component/Button";
-import Logo from "../component/Logo";
-import { useStore } from "../stores/store";
-// import { RootStackParamList } from "../types";
-import {
-    addDays,
-    isBefore, subDays
-} from 'date-fns';
-import { utcToZonedTime } from "date-fns-tz";
-import { RouteComponentProps } from "react-router";
 import Header from "../component/Header";
+import { useStore } from "../stores/store";
+// import { NativeStackScreenProps } from "@react-navigation/native-stack";
+// import { RootStackParamList } from "../types";
+
+
+
+import {
+    subDays,
+    addDays,
+    isBefore,
+} from 'date-fns';
+import { styles } from "../style";
+import { utcToZonedTime } from "date-fns-tz";
+import Logo from "../component/Logo";
+import { RouteComponentProps } from "react-router";
 import { useParams } from "../router/indexWeb";
 
-import { styles } from "../style";
-import el from "date-fns/esm/locale/el/index.js";
-import { observer } from "mobx-react-lite";
 
-// type ProfileScreen = NativeStackScreenProps<RootStackParamList, 'פרופיל'>
+
+// type DashboardScreenProps = NativeStackScreenProps<RootStackParamList, 'תורים'>
 interface Props extends RouteComponentProps { }
-export const ProfileScreen: React.FC<Props> = observer(({ history }) => {
-    const [schedule, setSchedule] = React.useState<any>([]);
-    const [date, setDate] = useState(new Date());
-    const [isPass, setIsPass] = React.useState(true);
-    const { userStore, appointmentStore } = useStore()
-    const { user } = userStore;
-    const { deleteAppointment } = appointmentStore;
 
+export const ProfileScreen: React.FC<Props> = ({ history }) => {
+
+    const [schedule, setSchedule] = React.useState<any>([]);
+    const [date, setDate] = React.useState(new Date());
+    const { userStore } = useStore();
+    const [loading, setLoading] = React.useState(false);
+    const [isPass, setIsPass] = React.useState(true);
+    const [isDayPass, setIsDayPass] = useState(false);
     const { username } = useParams<{ username: string }>();
+    const { user } = userStore;
+
+
+
+
+
+
+
+
+    useEffect(() => {
+
+        async function loadUserAppointment() {
+            const response = await agent.Appointments.list();
+
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            const data = response.map((appointment) => {
+                if (user?.userName === username && appointment.barberName === user.displayName) {
+
+                    const checkDate = Date.parse(appointment.appointmentDate)
+                    const compareDate = utcToZonedTime(checkDate, timezone);
+                    const past = isBefore(compareDate, new Date());
+                    setIsPass(past);
+                    console.log(past);
+                    if (!past) {
+                        return {
+                            appointmentId: appointment.appointmentId,
+                            displayName: appointment.attendee.displayName,
+                            date: appointment.appointmentDate.split('T').join().slice(0, 21),
+                            phoneNumber: appointment.attendee.phoneNumber,
+                            past: past,
+
+
+                        }
+                    }
+
+
+
+                }
+
+            }
+
+
+            )
+
+            const userAppointment = data.filter(item => typeof item !== 'undefined' && (new Date(item.date).getDate() === date.getDate()));
+            if (userAppointment.length > 0) {
+                const sortedAsc = userAppointment.sort(
+                    (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime());
+                setSchedule(sortedAsc)
+                console.log(userAppointment);
+            } else {
+                setSchedule(null);
+            }
+
+
+        }
+
+        loadUserAppointment();
+
+
+    }, [date, isPass])
+
 
 
     function handlePrevDay() {
 
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const checkDate = date;
+        const checkDate = date
         const compareDate = utcToZonedTime(checkDate, timezone);
 
         const past = isBefore(compareDate, new Date())
@@ -62,91 +129,6 @@ export const ProfileScreen: React.FC<Props> = observer(({ history }) => {
 
     }
     const day = date.getDay();
-
-    var dayheb = '';
-    if (day === 0) {
-        dayheb = 'ראשון';
-    }
-    else if (day === 1) {
-        dayheb = 'שני'
-    }
-    else if (day === 2) {
-        dayheb = 'שלישי'
-    }
-    else if (day === 3) {
-        dayheb = 'רביעי'
-    }
-    else if (day === 4) {
-        dayheb = 'חמישי'
-    }
-    else if (day === 5) {
-        dayheb = 'שישי'
-    }
-    else {
-        dayheb = 'שבת'
-    }
-
-
-
-    useEffect(() => {
-
-        async function loadUserAppointment() {
-            const response = await agent.Appointments.list();
-
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            const data = response.map((appointment) => {
-                if (user?.userName === username && appointment.barberName === user.displayName) {
-
-                    const checkDate = Date.parse(appointment.appointmentDate)
-                    const compareDate = utcToZonedTime(checkDate, timezone);
-                    const past = isBefore(compareDate, new Date());
-                    setIsPass(past);
-                    console.log(past);
-                    if (!past) {
-                        return {
-                            appointmentId: appointment.appointmentId,
-                            displayName: appointment.attendee.displayName,
-                            date: appointment.appointmentDate.split('T').join().slice(0, 21),
-                            past: past,
-
-
-                        }
-                    } else {
-                        deleteAppointment(appointment.appointmentDate);
-
-                    }
-
-
-                }
-
-            }
-
-
-            )
-
-            const userAppointment = data.filter(item => typeof item !== 'undefined' && (new Date(item.date).getDate() === date.getDate()));
-            if (userAppointment.length > 0) {
-                if (date.getDay() === new Date().getDay()) setIsPass(true);
-                else {
-                    setIsPass(false);
-                }
-                const sortedAsc = userAppointment.sort(
-                    (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime());
-                setSchedule(sortedAsc)
-                console.log(userAppointment);
-            } else {
-                setSchedule(null);
-            }
-
-
-        }
-
-        loadUserAppointment();
-
-
-    }, [date])
-
     const func = (number: number) => {
         var dayheb = '';
         if (number === 0) {
@@ -173,89 +155,109 @@ export const ProfileScreen: React.FC<Props> = observer(({ history }) => {
 
     }
 
+    var dayheb = '';
+    if (day === 0) {
+        dayheb = 'ראשון';
+    }
+    else if (day === 1) {
+        dayheb = 'שני'
+    }
+    else if (day === 2) {
+        dayheb = 'שלישי'
+    }
+    else if (day === 3) {
+        dayheb = 'רביעי'
+    }
+    else if (day === 4) {
+        dayheb = 'חמישי'
+    }
+    else if (day === 5) {
+        dayheb = 'שישי'
+    }
+    else {
+        dayheb = 'שבת'
+    }
+
+
+
+
+
+
+    // //format(date, 'EEEE d MMM y')
     return (
         <Background>
             <Logo />
-            <Header>{user?.displayName}</Header>
+            <Header>בחר תור</Header>
+            <Header children={undefined}></Header>
             <Header children={undefined}></Header>
             {
-                !isPass ? (
-                    <View >
-                        <Text style={{ color: 'white', fontSize: 25 }}>
-                            <TouchableOpacity onPress={handlePrevDay}>
-                                {isPass ? (<Text>{''}</Text>) : (
-                                    <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
-                            </TouchableOpacity>
-                            {'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
-                                day: 'numeric', month: 'short'
-                            }).replace(/ /g, '-')}
-                            <TouchableOpacity onPress={handleNextDay}>
-                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
-                            </TouchableOpacity>
-                        </Text>
-                        <Header children={undefined}></Header>
-                    </View>
-                ) : (
-                    <View >
-                        <Text style={{ color: 'white', fontSize: 25 }}>
-                            <TouchableOpacity onPress={handlePrevDay}>
-                                {isPass ? (<Text>{''}</Text>) : (
-                                    <Text style={{ color: 'balck', fontSize: 20 }} >{'אחורה'}</Text>)}
-                            </TouchableOpacity>
-                            {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
-                                day: 'numeric', month: 'short'
-                            }).replace(/ /g, '-')}
-                            <TouchableOpacity onPress={handleNextDay}>
-                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
-                            </TouchableOpacity>
-                        </Text>
-                        <Header children={undefined}></Header>
-                    </View>
 
-                )
+                <View >
+                    <Text style={{ color: 'white', fontSize: 25 }}>
+                        <TouchableOpacity onPress={handlePrevDay}>
+                            {date.getDay() === new Date().getDay() ? (<Text>{''}</Text>) : (
+                                <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
+                        </TouchableOpacity>
+                        {'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
+                            day: 'numeric', month: 'short'
+                        }).replace(/ /g, '-')}
+                        <TouchableOpacity onPress={handleNextDay}>
+                            <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
+                        </TouchableOpacity>
+                    </Text>
+                    <Header children={undefined}></Header>
+                </View>
+
+
             }
             {
+
                 schedule ? (
                     <FlatList
+                        style={{
+                            height: 250,
+                            flexGrow: 0
+                        }}
                         data={schedule}
                         renderItem={({ item }) =>
-                            <ScrollView >
+                            <ScrollView style={{
+                                flex: 2,
 
-                                {
-                                    (
-                                        <Button onPress={() => history.push(`/DetailsAppointments/${item.appointmentId}`)} >
+                                margin: 2,
+                            }} >
+
+                                {(
+                                    <>
+                                        <Button onPress={() => Linking.openURL(`https://wa.me/972${item.phoneNumber}`)}>
                                             <div className="event_item" key={item.appointmentId}>
-                                                <div className="ei_Title">{new Date(item.date).toLocaleDateString('he-IL', {
-                                                    day: 'numeric', month: 'short'
-                                                }).replace(/ /g, '-').toString() + ' יום ' + func(new Date(item.date).getDay())}
-                                                    {' ' + item.date.split('T').join().slice(16, 21) + ' ' + item.displayName}
+                                                <div className="ei_Title">
+                                                    {item.date.split('T').join().slice(16, 21) + ' ' + item.displayName}
                                                 </div>
                                             </div>
-                                        </Button>
+                                        </Button></>
 
-                                    )
-
-                                }
-
+                                )}
                             </ScrollView>}
+                        scrollEnabled={true}
 
                     />
-
-                ) : (
+                ) :
                     (
                         <View>
-                            <Text style={styles.label}>אין תורים ביום זה</Text>
+                            <Text style={styles.label}>אין תורים זמינים ביום זה </Text>
                         </View>
                     )
-                )
 
             }
-            <Button
-                mode="outlined"
-                onPress={() => history.push('/')}
-            >
-                בחזרה לעמוד הראשי
-            </Button>
-        </Background>
+
+
+        </Background >
     )
-})
+}
+
+
+
+
+
+
+

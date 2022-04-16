@@ -1,16 +1,14 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
-import Paragraph from "../component/Paragraph";
 import { useParams } from "../router/indexWeb";
 import { useStore } from "../stores/store";
-import { styles, stylesRegister } from "../style";
+import { stylesRegister } from "../style";
 interface Props extends RouteComponentProps { }
 
 export const DetailsAppointment: React.FC<Props> = observer(({ history }) => {

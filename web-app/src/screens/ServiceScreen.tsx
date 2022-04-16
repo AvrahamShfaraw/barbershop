@@ -1,13 +1,9 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { Text } from "react-native";
 import { RouteComponentProps } from "react-router";
 import Background from "../component/Background";
-import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
 import Paragraph from "../component/Paragraph";
-import { styles } from "../style";
 interface Props extends RouteComponentProps { }
 
 export const ServiceScreen: React.FC<Props> = ({ history }) => {

@@ -9,9 +9,7 @@ import { useStore } from "../stores/store";
 import uuid from 'react-native-uuid';
 // import { NativeStackScreenProps } from "@react-navigation/native-stack";
 // import { RootStackParamList } from "../types";
-import { IconButton } from "react-native-paper";
 
-import { StyleSheet } from 'react-native';
 
 
 import {
@@ -19,14 +17,11 @@ import {
     addDays,
     isBefore,
 } from 'date-fns';
-import { styles, stylesLogin } from "../style";
-import { ActivityIndicator } from "react-native-paper";
+import { styles } from "../style";
 import { utcToZonedTime } from "date-fns-tz";
-import Paragraph from "../component/Paragraph";
 import Logo from "../component/Logo";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "../router/indexWeb";
-import { el } from "date-fns/locale";
 
 
 
@@ -38,10 +33,8 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
     const { appointmentStore } = useStore();
-    const { createAppointment, updateAppointment, loadAvailableAppointment, availableAppointment, deleteAppointment } = appointmentStore;
+    const { createAppointment, updateAppointment } = appointmentStore;
     const [loading, setLoading] = React.useState(false);
-    const [isPass, setIsPass] = React.useState(true);
-    const [isDayPass, setIsDayPass] = useState(false);
     const { item } = useParams<{ item: string }>();
 
 
@@ -113,8 +106,6 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
                     const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
                     const past = isBefore(compareDate, new Date())
-                    setIsPass(past);
-                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
 
 
 
@@ -138,11 +129,6 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
-                    console.log(newdata);
-                    if (date.getDay() === new Date().getDay()) setIsPass(true);
-                    else {
-                        setIsPass(false);
-                    }
 
                 } else {
                     setSchedule(null);
@@ -157,8 +143,6 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
                     const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
                     const past = isBefore(compareDate, new Date())
-                    setIsPass(past);
-                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
 
 
 
@@ -182,12 +166,6 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
-                    console.log(newdata);
-                    if (date.getDay() === new Date().getDay()) setIsPass(true);
-                    else {
-                        setIsPass(false);
-                    }
-
                 } else {
                     setSchedule(null);
                 }
@@ -198,10 +176,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
                     const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
-                    const past = isBefore(compareDate, new Date())
-                    setIsPass(past);
-                    if (new Date().getDay !== date.getDay) setIsDayPass(true);
-
+                    const past = isBefore(compareDate, new Date());
 
 
                     if (availbale && !past && date.getDay() !== 6) {
@@ -224,11 +199,6 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
-                    console.log(newdata);
-                    if (date.getDay() === new Date().getDay()) setIsPass(true);
-                    else {
-                        setIsPass(false);
-                    }
 
                 } else {
                     setSchedule(null);
@@ -252,8 +222,7 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
         const checkDate = date
         const compareDate = utcToZonedTime(checkDate, timezone);
 
-        const past = isBefore(compareDate, new Date())
-        setIsPass(past);
+        const past = isBefore(compareDate, new Date());
 
         if (!past && date.getDay() !== 6) {
             if (date.getDay() === 0) {
@@ -312,40 +281,26 @@ export const Dashboard: React.FC<Props> = ({ history }) => {
             <Header children={undefined}></Header>
             <Header children={undefined}></Header>
             {
-                !isPass ? (
-                    <View >
-                        <Text style={{ color: 'white', fontSize: 25 }}>
-                            <TouchableOpacity onPress={handlePrevDay}>
-                                {isPass ? (<Text>{''}</Text>) : (
-                                    <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
-                            </TouchableOpacity>
-                            {'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
-                                day: 'numeric', month: 'short'
-                            }).replace(/ /g, '-')}
-                            <TouchableOpacity onPress={handleNextDay}>
-                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
-                            </TouchableOpacity>
-                        </Text>
-                        <Header children={undefined}></Header>
-                    </View>
-                ) : (
-                    <View >
-                        <Text style={{ color: 'white', fontSize: 25 }}>
-                            <TouchableOpacity onPress={handlePrevDay}>
-                                {isPass ? (<Text>{''}</Text>) : (
-                                    <Text style={{ color: 'balck', fontSize: 20 }} >{'אחורה'}</Text>)}
-                            </TouchableOpacity>
-                            {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
-                                day: 'numeric', month: 'short'
-                            }).replace(/ /g, '-')}
-                            <TouchableOpacity onPress={handleNextDay}>
-                                <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
-                            </TouchableOpacity>
-                        </Text>
-                        <Header children={undefined}></Header>
-                    </View>
 
-                )
+
+
+                <View >
+                    <Text style={{ color: 'white', fontSize: 25 }}>
+                        <TouchableOpacity onPress={handlePrevDay}>
+                            {date.getDay() === new Date().getDay() ? (<Text>{''}</Text>) : (
+                                <Text style={{ color: 'balck', fontSize: 20 }} >{'אחורה'}</Text>)}
+                        </TouchableOpacity>
+                        {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
+                            day: 'numeric', month: 'short'
+                        }).replace(/ /g, '-')}
+                        <TouchableOpacity onPress={handleNextDay}>
+                            <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
+                        </TouchableOpacity>
+                    </Text>
+                    <Header children={undefined}></Header>
+                </View>
+
+
             }
             {
 

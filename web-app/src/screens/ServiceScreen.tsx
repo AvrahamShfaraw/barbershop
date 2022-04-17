@@ -21,8 +21,8 @@ export const ServiceScreen: React.FC<Props> = ({ history }) => {
             <Paragraph>תספורות לגברים</Paragraph>
             <Paragraph>צבע</Paragraph>
             <Paragraph>זקן</Paragraph>
-            <Paragraph>החלקה</Paragraph>
-            <Paragraph>ועוד</Paragraph>
+            <Paragraph>אווירה אשש</Paragraph>
+            <Paragraph>תגיעו</Paragraph>
 
 
 

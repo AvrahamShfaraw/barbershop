@@ -480,7 +480,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                         </></>
                 )
             ) : <><Button onPress={() => history.push('/Home')}>
-                <Text>בא נתחיל התחבר/הרשם</Text></Button><Header children={undefined}></Header><View style={{ flexDirection: "row" }}>
+                <Text>בוא נתחיל התחבר/הרשם</Text></Button><Header children={undefined}></Header><View style={{ flexDirection: "row" }}>
                     <View style={styles.container}>
 
                         <TouchableOpacity

@@ -5,11 +5,14 @@ import Background from "../component/Background";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
 import { stylesRegister } from "../style";
+import Button from "../component/Button";
+import BackButton from "../component/BackButton";
 interface Props extends RouteComponentProps { }
 
 export const ContactScreen: React.FC<Props> = ({ history }) => {
     return (
         <Background>
+            <BackButton goBack={() => history.goBack()} />
             <Logo />
             <Header >איך מגיעים</Header>
             <Image
@@ -48,7 +51,6 @@ export const ContactScreen: React.FC<Props> = ({ history }) => {
                 source={require("../assets/map4.png")}
                 style={styles.buttonImageIconStyle}
             />
-
 
         </Background>
     )

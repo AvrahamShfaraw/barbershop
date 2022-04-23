@@ -15,11 +15,12 @@ import {
     addDays,
     isBefore,
 } from 'date-fns';
-import { styles, stylesRegister } from "../style";
+import { styles } from "../style";
 import { utcToZonedTime } from "date-fns-tz";
 import Logo from "../component/Logo";
 import { RouteComponentProps } from "react-router";
 import { useParams } from "../router/indexWeb";
+import { Item } from "semantic-ui-react";
 import BackButton from "../component/BackButton";
 
 
@@ -27,7 +28,7 @@ import BackButton from "../component/BackButton";
 // type DashboardScreenProps = NativeStackScreenProps<RootStackParamList, 'תורים'>
 interface Props extends RouteComponentProps { }
 
-export const ProfileScreen: React.FC<Props> = ({ history }) => {
+export const WaitingListScreen: React.FC<Props> = ({ history }) => {
 
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
@@ -36,8 +37,6 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     const { username } = useParams<{ username: string }>();
     const { user } = userStore;
     const { appointmentStore } = useStore();
-    const [countW, setCountWaitings] = useState(0);
-    const [countA, setCountAvailable] = useState(0);
 
 
 
@@ -53,62 +52,45 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
 
         async function loadUserAppointment() {
 
-            const response = agent.Appointments.list();
-            const response2 = agent.Waitings.list();
-            const waitings = (await response2).map((waiting) => {
-                if (waiting.barberName === user?.displayName && new Date(waiting.date).getDate() === date.getDate()) {
-                    return waiting;
-                }
-            })
-
-            const countWaitings = waitings.filter(a => typeof a !== 'undefined');
-            if (countWaitings.length > 0) {
-                setCountWaitings(countWaitings.length);
-            } else {
-                setCountWaitings(0);
-            }
-
-
+            const response = agent.Waitings.list();
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-            const data = (await response).map((appointment) => {
-                if (user?.userName === username && appointment.barberName === user.displayName) {
+            const data = (await response).map((waiting) => {
 
-                    const checkDate = Date.parse(appointment.appointmentDate)
+                if (user?.userName === username && waiting.barberName === user.displayName) {
+
+                    const checkDate = Date.parse(waiting.date)
                     const compareDate = utcToZonedTime(checkDate, timezone);
                     const past = isBefore(compareDate, new Date());
                     console.log(past);
-                    if (!past) {
-                        return {
-                            appointmentId: appointment.appointmentId,
-                            displayName: appointment.attendee.displayName,
-                            date: appointment.appointmentDate.split('T').join().slice(0, 21),
-                            phoneNumber: appointment.attendee.phoneNumber,
-                            past: past,
+
+                    return {
+                        id: waiting.id,
+                        displayName: waiting.displayName,
+                        date: waiting.date,
+                        phoneNumber: waiting.phoneNumber,
+                        past: past,
 
 
-                        }
                     }
 
 
 
+
                 }
 
-            }
+            })
+
+            const watingList = data.filter(item => typeof item !== 'undefined' && new Date(item.date).getDate() === date.getDate());
+            if (watingList.length > 0) {
 
 
-            )
 
-            const userAppointment = data.filter(item => typeof item !== 'undefined' && (new Date(item.date).getDate() === date.getDate()));
-            if (userAppointment.length > 0) {
-
-                const sortedAsc = userAppointment.sort(
-                    (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime());
-                setSchedule(sortedAsc)
-                console.log(userAppointment);
+                setSchedule(watingList)
+                console.log(watingList);
+                console.log((date.toString().split('T').join().slice(0, 16)));
             } else {
                 setSchedule(null);
-
             }
 
 
@@ -207,10 +189,10 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
     // //format(date, 'EEEE d MMM y')
     return (
         <Background>
-            <BackButton goBack={() => history.push('/')} />
+            <BackButton goBack={() => history.goBack()} />
             <Logo />
-            <Header >{user?.displayName}</Header>
-            <Header>התורים שלך</Header>
+            <Header>רשימת ממתינים</Header>
+            <Header children={undefined}></Header>
             <Header children={undefined}></Header>
             {
 
@@ -234,55 +216,46 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
             }
             {
 
-                !schedule ? (
-                    <View>
-                        <Text style={stylesRegister.link}>עדייו לא נקבע תור למועד זה</Text>
-                    </View>
+                schedule ? (
+                    <FlatList
+                        style={{
+                            height: 250,
+                            flexGrow: 0
+                        }}
+                        data={schedule}
+                        renderItem={({ item }) =>
+                            <ScrollView style={{
+                                flex: 2,
+
+                                margin: 2,
+                            }} >
+
+                                {(
+                                    <>
+                                        <Button onPress={() => history.push(`/waitingDetails/${item.id}`)}>
+                                            <div className="event_item" key={item.id}>
+                                                <div className="ei_Title">
+                                                    {item.displayName}
+                                                </div>
+                                            </div>
+                                        </Button></>
+
+                                )}
+                            </ScrollView>}
+                        scrollEnabled={true}
+
+                    />
                 ) :
                     (
-
-                        <FlatList
-                            style={{
-                                height: 250,
-                                flexGrow: 0
-                            }}
-                            data={schedule}
-                            renderItem={({ item }) =>
-                                <ScrollView style={{
-                                    flex: 2,
-
-                                    margin: 2,
-                                }} >
-
-                                    {(
-                                        <>
-                                            <Button onPress={() => Linking.openURL(`https://wa.me/972${item.phoneNumber}`)}>
-                                                <div className="event_item" key={item.appointmentId}>
-                                                    <div className="ei_Title">
-                                                        {item.date.split('T').join().slice(16, 21) + ' ' + item.displayName}
-                                                    </div>
-                                                </div>
-                                            </Button></>
-
-                                    )}
-                                </ScrollView>}
-                            scrollEnabled={true}
-
-                        />
+                        <View>
+                            <Text style={styles.label}>  רשימת ממתינים ריקה ליום זה </Text>
+                        </View>
                     )
 
             }
-            <TouchableOpacity
 
-                onPress={() => history.push(`/waiting/${user?.userName}`)}
-            >
-                <Text style={{ color: 'white', fontSize: 14, }}>רשימת ממתינים <Text style={{ color: 'red', fontSize: 14, }}>{" " + countW}</Text></Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => history.push(`/ProfileDashboard/${username}`)}
-            >
-                <Text style={{ color: 'white', fontSize: 14, }}>תורים זמינים ברגע זה</Text>
-            </TouchableOpacity>
+
+
 
         </Background >
     )

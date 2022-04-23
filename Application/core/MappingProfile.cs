@@ -9,6 +9,7 @@ namespace Application.core
         public MappingProfile()
         {
             CreateMap<Appointment, Appointment>();
+            CreateMap<Waiting, Waiting>();
             CreateMap<Appointment, AppointmentDto>()
                 .ForMember(d => d.HostUsername, o => o.MapFrom(s => s.Attendee.Customer.UserName));
 

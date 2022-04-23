@@ -33,18 +33,14 @@ import BackButton from "../component/BackButton";
 // type DashboardScreenProps = NativeStackScreenProps<RootStackParamList, 'תורים'>
 interface Props extends RouteComponentProps { }
 
-export const Dashboard: React.FC<Props> = observer(({ history }) => {
+export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
 
     const [schedule, setSchedule] = React.useState<any>([]);
     const [date, setDate] = React.useState(new Date());
-    const { appointmentStore, waitingStore, userStore } = useStore();
+    const { appointmentStore, userStore } = useStore();
     const { createAppointment, updateAppointment } = appointmentStore;
-    const { createWaiting, deleteWating } = waitingStore;
     const { user } = userStore;
     const [loading, setLoading] = React.useState(false);
-    const { item } = useParams<{ item: string }>();
-    const [Waiting, setWaittng] = useState<any>([]);
-    const [isWaiting, setIsWaittng] = useState(false);
 
 
 
@@ -67,85 +63,16 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
     const range3 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
-        '14:40', '15:00', '15:20', '15:40',];
+        '14:40', '15:00', '15:20', '15:40'];
 
 
-    async function handleDeleteWating() {
-        const response2 = await agent.Waitings.list();
-        const waiting = response2.map((a) => {
-            if (a.userName === user?.userName && new Date(a.date).getDate() === date.getDate()) {
-                deleteWating(a.id);
-            }
-        });
-    }
-
-    const handleDateClick = (e: any) => {
-        let newAppointment: AppointmentFormValues = {
-            appointmentDate: e,
-            barberName: item
-
-        };
-        handleFormSubmit(newAppointment)
-    }
-
-    const handleWaitingClick = () => {
-        let newWaiting: WaitingFormValues = {
-            userName: user?.userName,
-            displayName: user?.displayName,
-            phoneNumber: user?.phoneNumber,
-            barberName: item,
-            date: date.toString().split('T').join().slice(0, 16)
-        }
-        handleWaitingFormClick(newWaiting)
-    }
-
-    const handleWaitingFormClick = (waiting: WaitingFormValues) => {
-        if (!waiting.id) {
-            let newWaiting = {
-                ...waiting,
-                id: uuid.v4().toString(),
-            };
-            createWaiting(newWaiting).then(() => setIsWaittng(true))
-        }
 
 
-    }
-
-    function handleFormSubmit(appointment: AppointmentFormValues) {
-        if (!appointment.appointmentId) {
-            let newAppointment = {
-                ...appointment,
-                appointmentId: uuid.v4().toString(),
-            };
-            createAppointment(newAppointment).then(() => history.push(`/DetailsAppointments/${newAppointment.appointmentId}`));
-
-        } else {
-            updateAppointment(appointment).then(() => history.push(`/DetailsAppointments/${appointment.appointmentId}`))
-        }
-    }
 
     useEffect(() => {
 
         async function loadAvailableAppointment() {
             const response = await agent.Appointments.list();
-            const response2 = await agent.Waitings.list();
-
-            const waiting = response2.map((a) => {
-                if (a.userName === user?.userName && a.barberName === item && new Date(a.date).getDate() === date.getDate()) {
-                    return a;
-                }
-            }
-            );
-
-            const data = waiting.filter(a => typeof a !== 'undefined');
-            if (data.length > 0) {
-                setWaittng(data);
-                setIsWaittng(true);
-            } else {
-
-                setWaittng(null);
-                setIsWaittng(false)
-            }
 
 
 
@@ -165,7 +92,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
-                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === user?.displayName) ? false : true;
                     const past = isBefore(compareDate, new Date())
 
 
@@ -202,7 +129,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
-                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === user?.displayName) ? false : true;
                     const past = isBefore(compareDate, new Date())
 
 
@@ -236,7 +163,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
                     var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
-                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === item) ? false : true;
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === user?.displayName) ? false : true;
                     const past = isBefore(compareDate, new Date());
 
 
@@ -331,7 +258,6 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
 
 
-    if (!schedule && !loading) return <Header>loading</Header>
 
 
     // //format(date, 'EEEE d MMM y')
@@ -339,7 +265,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
         <Background>
             <BackButton goBack={() => history.goBack()} />
             <Logo />
-            <Header>בחר תור</Header>
+            <Header> רשימת תורים פנויים</Header>
             <Header children={undefined}></Header>
             <Header children={undefined}></Header>
             {
@@ -381,7 +307,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                             }} >
 
                                 {
-                                    <Button onPress={() => handleDateClick(item.appointmentDate)} >
+                                    <Button>
                                         <div className="event_item" key={item.key}>
                                             <div className="ei_Title">{item.time}</div>
                                         </div>
@@ -393,41 +319,19 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
                     />
                 ) :
-                    date.getDay() !== 6 ? (
-
-                        isWaiting ? (
-                            <View>
-                                <Text style={{ color: 'white' }}>אתה נמצא ברשימת המתנה ל{item} בתאריך זה</Text>
-                                <Header children={undefined}></Header>
-                                <TouchableOpacity
-                                    onPress={() => handleDeleteWating().then(() => setIsWaittng(false))}
-                                >
-                                    <Text style={stylesRegister.link}>{`לחץ כאן ליציאה מרשימת המתנה`}</Text>
-
-                                </TouchableOpacity>
-
-                            </View>
-
-                        ) : (
-                            <View>
-                                <Text style={{ color: 'white' }}>{`לא נותרו תורים אצל ${item}`}</Text>
-                                <Text style={{ color: 'white' }}>{`ניתן להזמין תור לספר אחר או להיכנס`}</Text>
-                                <Text style={{ color: 'white' }}>{`לרשימת ממתינים`}</Text>
-                                <Header children={undefined}></Header>
-                                <TouchableOpacity
+                    date.getDay() !== 6 && schedule === null ? (
+                        <View>
+                            <Text style={{ color: 'white' }}>{` לא נותרו תורים פנויים אצלך ביום זה`}</Text>
+                            <Header children={undefined}></Header>
+                            <TouchableOpacity
 
 
-                                    onPress={() => handleWaitingClick()}
-                                >
-                                    <Text style={stylesRegister.link}>{`לחץ כאן להיכנס לרשימת המתנה`}</Text>
+                                onPress={() => history.push(`/waiting/${user?.userName}`)}
+                            >
+                                <Text style={stylesRegister.link}>{`לחץ כאן לצפייה ברשימת ממתינים`}</Text>
 
-                                </TouchableOpacity>
-
-                            </View>
-
-                        )
-
-
+                            </TouchableOpacity>
+                        </View>
 
                     ) : (
                         <View>
@@ -442,13 +346,7 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                     )
             }
 
-            <Button
-                mode="outlined"
-                style={styles.button}
-                onPress={() => history.push('/')}
-            >
-                חזרה לעמוד הראשי
-            </Button>
+
 
         </Background >
     )

@@ -1,9 +1,13 @@
 import React from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 import { RouteComponentProps } from "react-router";
+import BackButton from "../component/BackButton";
 import Background from "../component/Background";
+import Button from "../component/Button";
 import Header from "../component/Header";
 import Logo from "../component/Logo";
+import { stylesRegister } from "../style";
 interface Props extends RouteComponentProps { }
 
 export const ProductList: React.FC<Props> = ({ history }) => {
@@ -12,6 +16,12 @@ export const ProductList: React.FC<Props> = ({ history }) => {
         "../assets/4.png", "../assets/5.png", "../assets/6.png", "../assets/7.png"];
     return (
         <Background>
+            <TouchableOpacity
+                style={styles2.container}
+                onPress={() => history.goBack()}
+            >
+                <Image style={styles2.image} source={require('../assets/2454563.png')} />
+            </TouchableOpacity>
             <Logo />
             <Header>המוצרים שלנו</Header>
 
@@ -179,5 +189,18 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         width: 2,
         height: 80,
+    },
+});
+
+
+const styles2 = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        top: 10 + getStatusBarHeight(),
+        left: 24,
+    },
+    image: {
+        width: 50,
+        height: 40,
     },
 });

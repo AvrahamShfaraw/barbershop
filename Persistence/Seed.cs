@@ -11,7 +11,7 @@ namespace Persistence
     {
         public static async Task SeedData(DataContext context, UserManager<Customer> userManager)
         {
-            if (!userManager.Users.Any() && !context.Appointments.Any())
+            if (!userManager.Users.Any() && !context.Appointments.Any() && !context.Waitings.Any())
             {
                 var users = new List<Customer>
                 {
@@ -45,7 +45,23 @@ namespace Persistence
                 }
 
 
-
+                var Waitings = new List<Waiting>
+                {
+                    new Waiting {
+                        DisplayName="TOM",
+                        UserName="tom",
+                        PhoneNumber="0501234567",
+                        BarberName="יהודה",
+                        Date= new DateTime().ToString()
+                    },
+                    new Waiting {
+                        DisplayName="BOB",
+                        UserName="bob",
+                        PhoneNumber="0501234568",
+                        BarberName="סלמון",
+                        Date= new DateTime().ToString()
+                    }
+                };
 
                 var appointments = new List<Appointment>
                             {
@@ -83,6 +99,7 @@ namespace Persistence
 
 
                 await context.Appointments.AddRangeAsync(appointments);
+                await context.Waitings.AddRangeAsync(Waitings);
                 await context.SaveChangesAsync();
 
             };

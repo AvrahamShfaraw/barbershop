@@ -18,10 +18,15 @@ export const DetailsAppointment: React.FC<Props> = observer(({ history }) => {
     const { deleteAppointment, loadAppointment, selectedAppointment: appointment, loadingInitial } = appointmentStore;
 
 
+
+
     useEffect(() => {
         if (appointmentId) loadAppointment(appointmentId);
 
     }, [appointmentId, loadAppointment]);
+
+
+
 
 
     const event = new Date(appointment!.appointmentDate.slice().slice(0, 15))
@@ -82,7 +87,7 @@ export const DetailsAppointment: React.FC<Props> = observer(({ history }) => {
 
 
 
-        </Background>
+        </Background >
     );
 
 
@@ -90,3 +95,6 @@ export const DetailsAppointment: React.FC<Props> = observer(({ history }) => {
 
 
 })
+
+
+//

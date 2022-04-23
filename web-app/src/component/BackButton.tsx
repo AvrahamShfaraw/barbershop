@@ -8,7 +8,7 @@ type Props = {
 
 const BackButton = ({ goBack }: Props) => (
     <TouchableOpacity onPress={goBack} style={styles.container}>
-        <Image style={styles.image} source={require('../assets/arrow_back.png')} />
+        <Image style={styles.image} source={require('../assets/2454563.png')} />
     </TouchableOpacity>
 );
 
@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
         left: 10,
     },
     image: {
-        width: 24,
-        height: 24,
+        width: 50,
+        height: 40,
     },
 });
 

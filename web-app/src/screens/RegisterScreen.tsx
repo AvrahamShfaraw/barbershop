@@ -1,7 +1,8 @@
 // import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Image, Text, TouchableOpacity } from "react-native";
 import { RouteComponentProps } from "react-router";
+import BackButton from "../component/BackButton";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Header from "../component/Header";
@@ -10,9 +11,9 @@ import TextInput from "../component/TextInput";
 import { UserFormValues } from "../models/user";
 import { useStore } from "../stores/store";
 import { stylesRegister, styles } from "../style";
-// import { RootStackParamList } from "../types";
+import { StyleSheet } from "react-native";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
-// type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'הרשמה'>
 interface Props extends RouteComponentProps { }
 
 
@@ -36,24 +37,57 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
         ;
     }
 
+    const thereIsSpace = (str: string) => {
+        if (str !== '') {
+            for (let i = 0; i < str.length; i++) {
+                if (str[i] === ' ') {
+                    return true
+                }
+            }
+            return false;
+        }
+    }
+
     const dispalyNameValidate = (str: string) => {
-        if (str === '')
+        if (str === '' || str.length <= 4) {
             return 'הזן שם מלא ';
+        } else if (str) {
+            if (!thereIsSpace(str)) return 'שם מלא חובה'
+
+        } else {
+            for (let i = 0; i < str.length; i++) {
+                if (str[i] >= '0' && str[i] <= '9') {
+                    return 'שדה זה הינו שם מלא בלבד'
+                }
+            }
+        }
+
 
     }
+
+
+
     const phoneValidate = (str: string) => {
-        if (str === '')
-            return 'הזן מס טלפון';
+        if (str === '') {
+            return 'שדה ריק הזן מס טלפון';
+        } else if (str.length != 10) {
+            return 'הזן מס טלפון תקין 10 ספרות'
+        }
+
+        for (let i = 0; i < str.length; i++) {
+            if (!(str[i] >= '0' && str[i] <= '9')) {
+                return 'שדה זה מחייב מספרים בלבד  '
+            }
+            else if (!(str[0] === '0' && str[1] === '5')) {
+                return 'מס נייד לא תקין חובה להתחיל ב 05'
+            }
+        }
 
     }
 
     const _onSignUpPressed = () => {
         const displayNameError = dispalyNameValidate(displayName.value);
         const phoneError = phoneValidate(phoneNumber.value);
-
-
-
-
         if (displayNameError || phoneError) {
 
             setDisplayName({ ...displayName, error: displayNameError! });
@@ -68,7 +102,7 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
             password: 'Pa$$w0rd' + phoneNumber.value
         }
 
-        userStore.register(creds).then(() => {
+        userStore.register(creds).catch(erorr => setSetErrort(erorr.response.data)).then(() => {
             if (isSalamon(creds.userName!)) {
                 history.push(`/profile/${creds.userName}`)
 
@@ -78,13 +112,19 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
             else history.push('/barberName');
 
 
-        }).catch(erorr => setSetErrort(erorr.response.data));
+        });
 
 
     }
 
     return (
         <Background>
+            <TouchableOpacity
+                style={styles2.container}
+                onPress={() => history.goBack()}
+            >
+                <Image style={styles2.image} source={require('../assets/2454563.png')} />
+            </TouchableOpacity>
             <Logo />
             <Header>הרשמה</Header>
 
@@ -118,3 +158,16 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
         </Background >
     );
 }
+
+
+const styles2 = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        top: 10 + getStatusBarHeight(),
+        left: -24,
+    },
+    image: {
+        width: 50,
+        height: 40,
+    },
+});

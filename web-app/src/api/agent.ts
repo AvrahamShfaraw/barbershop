@@ -3,6 +3,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { Appointment, AppointmentFormValues } from "../models/appointment";
 import { Profile } from "../models/profile";
 import { User, UserFormValues } from "../models/user";
+import { Waiting, WaitingFormValues } from "../models/waiting";
 import { store } from "../stores/store";
 
 
@@ -50,6 +51,12 @@ const Appointments = {
     delete: (appointmentId: string) => requests.delete<void>(`/appointments/${appointmentId}`),
     attend: (id: string) => requests.post<void>(`/appointments/${id}/attend`, {})
 }
+const Waitings = {
+    list: () => requests.get<Waiting[]>('/waiting'),
+    details: (id: string) => requests.get<Waiting>(`/waiting/${id}`),
+    create: (waiting: WaitingFormValues) => requests.post<void>('/waiting', waiting),
+    delete: (id: string) => requests.delete<void>(`/waiting/${id}`),
+}
 
 const Account = {
     current: () => requests.get<User>('/account'),
@@ -57,17 +64,12 @@ const Account = {
     register: (user: UserFormValues) => requests.post<User>('/account/register', user)
 }
 
-const Profiles = {
-    get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
-    setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
-    deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
-    updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`, profile)
-}
+
 
 const agent = {
     Appointments,
     Account,
-    Profiles
+    Waitings
 }
 
 export default agent

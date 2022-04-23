@@ -71,7 +71,8 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
 
 
                     }
-                } else {
+                }
+                else if (appointment.attendee.userName === user?.userName) {
                     deleteAppointment(appointment.appointmentId);
                 }
 
@@ -107,7 +108,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
             {userStore.isLoggedIn ? (
 
 
-                user?.userName === 'user0522540642' ? (
+                user?.userName === 'user0522540642' || user?.userName === 'user0527701195' ? (
 
 
                     <><><Header>{userStore.user?.displayName}</Header></>

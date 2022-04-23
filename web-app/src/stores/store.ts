@@ -3,12 +3,14 @@ import AppointmentStore from "./appointmentStore";
 import CommonStore from "./commonStore";
 import ModalStore from "./modalStore";
 import UserStore from "./userStore";
+import WaitingtStore from "./waitingStore";
 
 interface Store {
     userStore: UserStore;
     modalStore: ModalStore;
     commonStore: CommonStore;
     appointmentStore: AppointmentStore;
+    waitingStore: WaitingtStore;
 }
 
 export const store: Store = {
@@ -16,6 +18,7 @@ export const store: Store = {
     modalStore: new ModalStore(),
     commonStore: new CommonStore(),
     appointmentStore: new AppointmentStore(),
+    waitingStore: new WaitingtStore(),
 
 }
 

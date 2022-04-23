@@ -3,9 +3,10 @@ import { isBefore } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Image, Text, TouchableOpacity } from "react-native";
 import { RouteComponentProps } from "react-router";
 import agent from "../api/agent";
+import BackButton from "../component/BackButton";
 import Background from "../component/Background";
 import Button from "../component/Button";
 import Header from "../component/Header";
@@ -14,6 +15,8 @@ import TextInput from "../component/TextInput";
 import { UserFormValues } from "../models/user";
 import { useStore } from "../stores/store";
 import { styles, stylesLogin } from "../style";
+import { StyleSheet } from "react-native";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 // import { RootStackParamList } from "../types";
 // type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'התחברות'>
 
@@ -122,6 +125,12 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
 
     return (
         <Background>
+            <TouchableOpacity
+                style={styles2.container}
+                onPress={() => history.goBack()}
+            >
+                <Image style={styles2.image} source={require('../assets/2454563.png')} />
+            </TouchableOpacity>
             <Logo />
             <Header>התחברות</Header>
             <TextInput
@@ -143,9 +152,18 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
                 style={styles.button}>
                 התחבר
             </Button>
-
-
-
         </Background>
     );
 })
+
+const styles2 = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        top: 10 + getStatusBarHeight(),
+        left: -24,
+    },
+    image: {
+        width: 50,
+        height: 40,
+    },
+});

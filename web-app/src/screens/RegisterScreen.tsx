@@ -37,23 +37,11 @@ export const RegisterScreen: React.FC<Props> = ({ history }) => {
         ;
     }
 
-    const thereIsSpace = (str: string) => {
-        if (str !== '') {
-            for (let i = 0; i < str.length; i++) {
-                if (str[i] === ' ') {
-                    return true
-                }
-            }
-            return false;
-        }
-    }
+
 
     const dispalyNameValidate = (str: string) => {
         if (str === '' || str.length <= 4) {
             return 'הזן שם מלא ';
-        } else if (str) {
-            if (!thereIsSpace(str)) return 'שם מלא חובה'
-
         } else {
             for (let i = 0; i < str.length; i++) {
                 if (str[i] >= '0' && str[i] <= '9') {

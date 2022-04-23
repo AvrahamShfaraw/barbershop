@@ -2,7 +2,6 @@ import { ConfirmationScreen } from "../screens/ConfirmationScreen";
 import { ContactScreen } from "../screens/ContactScreen";
 import { Dashboard } from "../screens/Dashboard";
 import { DefaultScreen } from "../screens/DefaultScreen";
-import { DeleteScreen } from "../screens/DeleteAppointment";
 import { DetailsAppointment } from "../screens/DetailsAppointment";
 import { HomeScreen } from "../screens/HomeScreen";
 import { LoginScreen } from "../screens/LoginScreen";
@@ -28,7 +27,6 @@ export const Routes = () => {
                 <Route exact path={'/register'} component={RegisterScreen} />
                 <Route exact path={'/service'} component={ServiceScreen} />
                 <Route exact path={'/contact'} component={ContactScreen} />
-                <Route exact path={'/delete/:appointmentId'} component={DeleteScreen} />
                 <Route exact path={'/barberName'} component={SelectBarber} />
                 <Route exact path={'/dashboard/:item'} component={Dashboard} />
                 <Route exact path='/DetailsAppointments/:appointmentId' component={DetailsAppointment} />

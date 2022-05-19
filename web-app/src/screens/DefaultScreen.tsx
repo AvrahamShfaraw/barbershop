@@ -242,7 +242,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
                                         renderItem={({ item }) => <ScrollView>
 
                                             {(
-                                                <><Button onPress={() => { history.push(`/delete/${item.appointmentId}`); }}>{'לביטול התור לחץ כאן'}</Button>
+                                                <><Button onPress={() => { appointmentStore.deleteAppointment(item.appointmentId).then(() => history.go(0)) }}>{'לביטול התור לחץ כאן'}</Button>
                                                     <Button mode="outlined" onPress={() => history.push(`/DetailsAppointments/${item.appointmentId}`)}>
                                                         <div className="event_item" key={item.appointmentId}>
                                                             <div className="ei_Title">{new Date(item.appointmentDate).toLocaleDateString('he-IL', {

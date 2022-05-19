@@ -45,9 +45,15 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
     const { item } = useParams<{ item: string }>();
     const [Waiting, setWaittng] = useState<any>([]);
     const [isWaiting, setIsWaittng] = useState(false);
+    const [counter, setCounter] = useState(0);
 
 
-
+    const handleNextClick = (num: number) => {
+        setCounter(counter + num);
+    }
+    const handlePrevClick = (num: number) => {
+        setCounter(counter - num);
+    }
     const range1 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
@@ -190,6 +196,8 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
+                    console.log(date.getDate());
+                    console.log(counter);
 
                 } else {
                     setSchedule(null);
@@ -227,6 +235,8 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
+                    console.log(counter);
+
                 } else {
                     setSchedule(null);
                 }
@@ -260,6 +270,8 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
 
                 if (newdata.length > 0) {
                     setSchedule(newdata);
+                    console.log(counter);
+
 
                 } else {
                     setSchedule(null);
@@ -277,6 +289,8 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
         setLoading(true);
     }, [date]);
 
+
+
     function handlePrevDay() {
 
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -288,9 +302,13 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
         if (!past && date.getDay() !== 6) {
             if (date.getDay() === 0) {
                 setDate(subDays(date, 2));
+                handlePrevClick(2);
 
             } else {
                 setDate(subDays(date, 1));
+                handlePrevClick(1);
+
+
             }
 
         }
@@ -299,8 +317,11 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
     function handleNextDay() {
         if (date.getDay() === 5) {
             setDate(addDays(date, 2));
+            handleNextClick(2);
         } else {
             setDate(addDays(date, 1));
+            handleNextClick(1);
+
         }
 
     }
@@ -349,14 +370,14 @@ export const Dashboard: React.FC<Props> = observer(({ history }) => {
                 <View >
                     <Text style={{ color: 'white', fontSize: 25 }}>
                         <TouchableOpacity onPress={handlePrevDay}>
-                            {date.getDay() === new Date().getDay() ? (<Text>{''}</Text>) : (
+                            {date.getDate() === new Date().getDate() ? (<Text>{''}</Text>) : (
                                 <Text style={{ color: 'red', fontSize: 20 }} >{'אחורה'}</Text>)}
                         </TouchableOpacity>
-                        {' '}{'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
+                        {'  יום ' + dayheb}  {date.toLocaleDateString('he-IL', {
                             day: 'numeric', month: 'short'
-                        }).replace(/ /g, '-')}
+                        }).replace(/ /g, '-')}{'  '}
                         <TouchableOpacity onPress={handleNextDay}>
-                            <Text style={{ color: 'red', fontSize: 20 }} > {' הבא'}</Text>
+                            {counter < 14 ? (<Text style={{ color: 'red', fontSize: 20 }} >{'קדימה'}</Text>) : (<Text style={{ color: 'blue', fontSize: 20 }} >{''}</Text>)}
                         </TouchableOpacity>
                     </Text>
                     <Header children={undefined}></Header>

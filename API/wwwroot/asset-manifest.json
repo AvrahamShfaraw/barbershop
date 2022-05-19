@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.js": "/static/js/main.896ac9c2.js",
+    "static/js/787.c6006e9a.chunk.js": "/static/js/787.c6006e9a.chunk.js",
+    "static/media/6.png": "/static/media/6.4963de27c18b4b65bca0.png",
+    "static/media/5.png": "/static/media/5.3c98862f15f6acd7c8dc.png",
+    "static/media/map4.png": "/static/media/map4.a38a6cf8f73a668c8a1d.png",
+    "static/media/3.png": "/static/media/3.176b35186e6128d70c26.png",
+    "static/media/2.png": "/static/media/2.1a9477da68a58c2d905d.png",
+    "static/media/7.png": "/static/media/7.67fae02af7801ae62666.png",
+    "static/media/newbarber.png": "/static/media/newbarber.cf6e6161fa84663c57a3.png",
+    "static/media/cart.png": "/static/media/cart.8642c75599f38daa87d8.png",
+    "static/media/1.png": "/static/media/1.7ab71204a2e8b62a6817.png",
+    "static/media/whatsapp.png": "/static/media/whatsapp.43a4918296128915afbb.png",
+    "static/media/map.png": "/static/media/map.73948584a92a3fc87a6f.png",
+    "static/media/waze.png": "/static/media/waze.5f81825c77bf9eaf0997.png",
+    "static/media/instagram (4).png": "/static/media/instagram (4).6030a8815dc4d150b086.png",
+    "static/media/2454563.png": "/static/media/2454563.33fe4c685f900a066cb8.png",
+    "static/media/Phone_icon.png": "/static/media/Phone_icon.a40c2be715452ecddb39.png",
+    "static/media/confirmation.png": "/static/media/confirmation.255baae377a3721f99fa.png",
+    "static/media/barber-shop.png": "/static/media/barber-shop.0889d3dbeffaa0058cf3.png",
+    "static/media/placeholder.png": "/static/media/placeholder.64cdcb0ef97818161310.png",
+    "index.html": "/index.html",
+    "main.896ac9c2.js.map": "/static/js/main.896ac9c2.js.map",
+    "787.c6006e9a.chunk.js.map": "/static/js/787.c6006e9a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.896ac9c2.js"
+  ]
+}

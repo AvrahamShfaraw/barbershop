@@ -43,27 +43,32 @@ export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
     const [loading, setLoading] = React.useState(false);
 
 
-
-    const range1 = ['10:00', '10:20', '10:40', '11:00',
+    const range12 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
         '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'
         , '16:40', '17:00', '17:20', '17:40', '18:00', '18:20',
-        '18:40', '19:00', '19:20', '19:40', '20:00',
-        '20:20', '20:40'];
+        '18:40', '19:00', '19:20'];
 
-    const range2 = ['10:00', '10:20', '10:40', '11:00',
+    const range34 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
         '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'
         , '16:40', '17:00', '17:20', '17:40', '18:00', '18:20',
-        '18:40', '19:00', '19:20', '19:40', '20:00',
-        '20:20', '20:40', '21:00', '21:20', '21:40', '22:00', '22:20',
-        '22:40'];
-    const range3 = ['10:00', '10:20', '10:40', '11:00',
+        '18:40', '19:00', '19:20', '19:40'];
+    const range5 = ['10:00', '10:20', '10:40', '11:00',
         '11:20', '11:40', '12:00', '12:20', '12:40',
         '13:00', '13:20', '13:40', '14:00', '14:20',
-        '14:40', '15:00', '15:20', '15:40'];
+        '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'
+        , '16:40', '17:00', '17:20', '17:40', '18:00', '18:20',
+        '18:40', '19:00', '19:20', '19:40', '20:00', '20:20', '20:40', '21:00', '21:20', '21:40'];;
+
+
+
+    const range6 = ['10:00', '10:20', '10:40', '11:00',
+        '11:20', '11:40', '12:00', '12:20', '12:40',
+        '13:00', '13:20', '13:40', '14:00', '14:20',
+        '14:40', '15:00', '15:20', '15:40', '16:00', '16:20'];
 
 
 
@@ -87,7 +92,7 @@ export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             if (date.getDay() !== 6 && date.getDay() === 4) {
 
-                const data = range2.map((hour, i) => {
+                const data = range5.map((hour, i) => {
                     const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
@@ -124,7 +129,7 @@ export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
 
 
             } else if (date.getDay() === 5) {
-                const data = range3.map((hour, i) => {
+                const data = range6.map((hour, i) => {
                     const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
@@ -157,8 +162,8 @@ export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
                 } else {
                     setSchedule(null);
                 }
-            } else if (date.getDay() !== 6) {
-                const data = range1.map((hour, i) => {
+            } else if (date.getDay() === 2 || date.getDay() === 3) {
+                const data = range34.map((hour, i) => {
                     const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
                     const compareDate = utcToZonedTime(checkDate, timezone);
 
@@ -191,7 +196,43 @@ export const ProfileDashboard: React.FC<Props> = observer(({ history }) => {
                 } else {
                     setSchedule(null);
                 }
-            } else {
+            } else if (date.getDay() === 0 || date.getDay() === 1) {
+                const data = range12.map((hour, i) => {
+                    const checkDate = Date.parse(date.toString().split('T').join().slice(0, 16) + hour + ':00');
+                    const compareDate = utcToZonedTime(checkDate, timezone);
+
+                    var check = date.toString().split('T').join().slice(0, 16) + hour + ':00';
+                    const availbale = appointments.find((x) => x.appointmentDate === check && x.barberName === user?.displayName) ? false : true;
+                    const past = isBefore(compareDate, new Date());
+
+
+                    if (availbale && !past) {
+                        return {
+                            key: i,
+                            time: `${hour}`,
+                            day: date.getDay(),
+                            availbale: availbale,
+                            past: isBefore(compareDate, new Date()),
+                            appointmentDate: check,
+                            x: appointments.find((x) => x.appointmentDate === check)
+                        };
+
+                    }
+
+
+                });
+                const newdata = data.filter((item) => typeof item !== 'undefined');
+
+
+                if (newdata.length > 0) {
+                    setSchedule(newdata);
+
+                } else {
+                    setSchedule(null);
+                }
+            }
+
+            else {
 
                 const data = null;
                 setSchedule(data);

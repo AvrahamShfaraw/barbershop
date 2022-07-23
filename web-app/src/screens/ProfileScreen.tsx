@@ -100,12 +100,31 @@ export const ProfileScreen: React.FC<Props> = ({ history }) => {
             )
 
             const userAppointment = data.filter(item => typeof item !== 'undefined' && (new Date(item.date).getDate() === date.getDate()));
-            if (userAppointment.length > 0) {
+            const sortedAsc = userAppointment.sort(
+                (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime());
+            // const unique = sortedAsc.map(item => item?.date)
+            //     .filter((value, index, self) =>
+            //         self.indexOf(value) === index);
+            // console.log(unique);
 
-                const sortedAsc = userAppointment.sort(
-                    (objA, objB) => new Date(objA!.date).getTime() - new Date(objB!.date).getTime());
-                setSchedule(sortedAsc)
-                console.log(userAppointment);
+            const uniqueIds: (string | undefined)[] = [];
+
+            const unique = sortedAsc.filter(element => {
+                const isDuplicate = uniqueIds.includes(element?.date);
+
+                if (!isDuplicate) {
+                    uniqueIds.push(element?.date);
+
+                    return true;
+                }
+
+                return false;
+            });
+            if (unique.length > 0) {
+
+
+
+                setSchedule(unique)
             } else {
                 setSchedule(null);
 

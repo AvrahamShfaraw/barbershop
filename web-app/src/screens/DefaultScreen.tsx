@@ -108,7 +108,7 @@ export const DefaultScreen: React.FC<Props> = observer(({ history }) => {
             {userStore.isLoggedIn ? (
 
 
-                user?.userName === 'user0522540642' || user?.userName === 'user0527701195' ? (
+                user?.userName === 'user0520000123' || user?.userName === 'user0520000321' ? (
 
 
                     <><><Header>{userStore.user?.displayName}</Header></>

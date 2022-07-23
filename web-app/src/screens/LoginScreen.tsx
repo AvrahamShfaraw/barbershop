@@ -62,7 +62,7 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
             }
         });
 
-        userAppointment.filter((item) => typeof item!.appointmentDate !== 'undefined');
+        userAppointment.filter((item: any) => typeof item!.appointmentDate !== 'undefined');
 
         if (userAppointment.length) setCheck(false); else setCheck(true);
         console.log(check);
@@ -73,13 +73,13 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
     }
 
     const isSalamon = (name: string) => {
-        if (name === 'user0522540642') return true;
+        if (name === 'user0520000123') return true;
         else return false;
         ;
     }
 
     const isYoda = (name: string) => {
-        if (name === 'user0527701195') return true;
+        if (name === 'user0520000321') return true;
         else return false;
         ;
     }

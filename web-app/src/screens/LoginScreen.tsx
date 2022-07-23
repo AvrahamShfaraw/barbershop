@@ -73,13 +73,13 @@ export const LoginScreen: React.FC<Props> = observer(({ history }) => {
     }
 
     const isSalamon = (name: string) => {
-        if (name === 'user0520000124') return true;
+        if (name === 'user0520000999') return true;
         else return false;
         ;
     }
 
     const isYoda = (name: string) => {
-        if (name === 'user0520000421') return true;
+        if (name === 'user0520000888') return true;
         else return false;
         ;
     }
